@@ -1,6 +1,7 @@
 use std::sync::OnceLock;
 
 use reqwest::{self, Error};
+use serde::Deserialize;
 
 const BASE_URL: &str = "http://localhost:4000";
 
