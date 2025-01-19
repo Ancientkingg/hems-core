@@ -2,6 +2,7 @@ use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 use actix_web::middleware::Logger;
 use env_logger::Env;
 
+mod api;
 mod resources;
 
 use resources::house;
