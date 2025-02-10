@@ -36,9 +36,9 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let current_consumption = bp.electricity_consumption.unwrap().norm();
 
     let battery_status = if current_consumption > 1e2 {
-        BatteryStatus::Charging
-    } else if current_consumption < -1e2 {
         BatteryStatus::Discharging
+    } else if current_consumption < -1e2 {
+        BatteryStatus::Charging
     } else {
         BatteryStatus::Idle
     };
@@ -46,7 +46,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let battery_info = BatteryInfo {
         capacity: bp.capacity,
         max_charge: *bp.charging_powers.last().unwrap_or(&0.0),
-        max_discharge: *bp.charging_powers.first().unwrap_or(&0.0),
+        max_discharge: -*bp.charging_powers.first().unwrap_or(&0.0),
         state_of_charge: bp.soc,
         status: battery_status,
         consumption: bp.electricity_consumption.unwrap().norm(),
