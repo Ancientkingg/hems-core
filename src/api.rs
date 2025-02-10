@@ -1,6 +1,6 @@
 pub mod demkit;
 
-#[actix_web::get("/")]
+#[actix_web::get("/healthz")]
 pub async fn health() -> impl actix_web::Responder {
-    actix_web::HttpResponse::Ok().body("Hello world!")
+    actix_web::HttpResponse::Ok().body("OK")
 }

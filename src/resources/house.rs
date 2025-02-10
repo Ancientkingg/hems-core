@@ -2,14 +2,15 @@ use actix_web::{get, web, HttpResponse, Responder};
 
 #[path = "devices/devices.rs"]
 mod devices;
-use devices::{battery, meter};
+use devices::{battery, meter, solar};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/houses/{id}")
             .service(get_by_id)
             .configure(battery::configure)
-            .configure(meter::configure),
+            .configure(meter::configure)
+            .configure(solar::configure),
     );
 }
 
