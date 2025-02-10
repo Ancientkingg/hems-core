@@ -19,9 +19,16 @@ pub struct Measurement {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(untagged)]
+enum Commodity {
+    complex(String),
+    real(f64),
+}
+
+#[derive(Deserialize, Debug)]
 struct Commodities {
     #[serde(rename = "ELECTRICITY")]
-    pub electricity: String,
+    pub electricity: Commodity,
 }
 
 #[derive(Deserialize, Debug)]
@@ -54,6 +61,30 @@ pub struct BatteryProperties {
     pub electricity_consumption: Option<Complex<f64>>,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct SolarProperties {
+    pub name: String,
+    #[serde(rename = "timeBase")]
+    pub time_base: i64,
+    #[serde(rename = "timeOffset")]
+    pub time_offset: i64,
+    pub devtype: String,
+    pub commodities: Vec<String>,
+    #[serde(rename = "strictComfort")]
+    pub strict_comfort: bool,
+    pub consumption: Commodities,
+    pub size: f64,
+    pub efficiency: f64,
+    pub inclination: f64,
+    pub azimuth: f64,
+    #[serde(rename = "onOffDevice")]
+    pub on_off_device: bool,
+    #[serde(rename = "originalConsumption")]
+    pub original_consumption: Commodities,
+
+    pub electricity_consumption: Option<Complex<f64>>,
+}
+
 #[derive(thiserror::Error, Debug)]
 pub enum ApiError {
     #[error("Request failed")]
@@ -64,16 +95,15 @@ pub enum ApiError {
     ParseError(#[from] ParseComplexError<ParseFloatError>),
 }
 
-fn parse_complex_str(input: &str) -> Result<Complex<f64>, ParseComplexError<ParseFloatError>> {
-    Complex::from_str(&input[2..].replace("(", "").replace(")", ""))
-}
-
-fn complex_from_str<'de, D>(deserializer: D) -> Result<Complex<f64>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
-    parse_complex_str(&s).map_err(serde::de::Error::custom)
+fn parse_complex_str(
+    input: &Commodity,
+) -> Result<Complex<f64>, ParseComplexError<ParseFloatError>> {
+    match input {
+        Commodity::complex(input) => {
+            Complex::from_str(&input[2..].replace("(", "").replace(")", ""))
+        }
+        Commodity::real(input) => Ok(Complex::new(*input, 0.0)),
+    }
 }
 
 pub async fn get_energy_import(house_id: u32) -> Result<Measurement, ApiError> {
@@ -119,7 +149,23 @@ pub async fn get_battery_properties(house_id: u32) -> Result<BatteryProperties, 
 
     let mut response_body = response.json::<BatteryProperties>().await?;
 
-    response_body.electricity_consumption = Some(parse_complex_str(&response_body.consumption.electricity)?);
+    response_body.electricity_consumption =
+        Some(parse_complex_str(&response_body.consumption.electricity)?);
+
+    Ok(response_body)
+}
+
+pub async fn get_solar_properties(house_id: u32) -> Result<SolarProperties, ApiError> {
+    let client = CLIENT.get_or_init(init);
+
+    let url = format!("{}/call/PV-House-{house_id}/getProperties", BASE_URL);
+
+    let response = client.get(url).send().await?;
+
+    let mut response_body = response.json::<SolarProperties>().await?;
+
+    response_body.electricity_consumption =
+        Some(parse_complex_str(&response_body.original_consumption.electricity)?);
 
     Ok(response_body)
 }
