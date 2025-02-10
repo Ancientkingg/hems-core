@@ -7,6 +7,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/solar/{id}")
             .service(get_by_id)
+            .service(toggle),
     );
 }
 
@@ -29,4 +30,11 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     };
 
     HttpResponse::Ok().json(solar_info)
+}
+
+#[get("/toggle/{state}")]
+async fn toggle(id: web::Path<(u32, u32, bool)>) -> impl Responder {
+    let (house_id, solar_id, state) = id.into_inner();
+    demkit::set_solar_state(house_id, state).await.unwrap();
+    HttpResponse::Ok().body(format!("Toggled {state}"))
 }

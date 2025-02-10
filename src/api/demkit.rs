@@ -170,6 +170,18 @@ pub async fn get_solar_properties(house_id: u32) -> Result<SolarProperties, ApiE
     Ok(response_body)
 }
 
+pub async fn set_solar_state(house_id: u32, state: bool) -> Result<(), ApiError> {
+    let client = CLIENT.get_or_init(init);
+
+    let state = if state { "True" } else { "False" };
+
+    let url = format!("{}/set/PV-House-{house_id}/onOffDevice/{state}", BASE_URL);
+
+    client.get(url).send().await?;
+
+    Ok(())
+}
+
 pub async fn get_device_consumption(
     house_id: u32,
     device_name: &str,
