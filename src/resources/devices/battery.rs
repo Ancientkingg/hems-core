@@ -26,9 +26,9 @@ struct BatteryInfo {
 
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
-    let (house_id, battery_id) = id.into_inner();
+    let (house_id, _battery_id) = id.into_inner();
 
-    let bp = match demkit::get_battery_properties(house_id).await {
+    let bp = match demkit::battery::get_battery_properties(house_id).await {
         Ok(properties) => properties,
         Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
     };

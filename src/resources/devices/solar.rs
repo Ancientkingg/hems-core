@@ -18,9 +18,9 @@ struct SolarInfo {
 
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
-    let (house_id, solar_id) = id.into_inner();
+    let (_house_id, solar_id) = id.into_inner();
 
-    let sp = match demkit::get_solar_properties(solar_id).await {
+    let sp = match demkit::solar::get_solar_properties(solar_id).await {
         Ok(properties) => properties,
         Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
     };
@@ -34,7 +34,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[get("/toggle/{state}")]
 async fn toggle(id: web::Path<(u32, u32, bool)>) -> impl Responder {
-    let (house_id, solar_id, state) = id.into_inner();
-    demkit::set_solar_state(house_id, state).await.unwrap();
+    let (house_id, _solar_id, state) = id.into_inner();
+    demkit::solar::set_solar_state(house_id, state).await.unwrap();
     HttpResponse::Ok().body(format!("Toggled {state}"))
 }

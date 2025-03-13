@@ -28,21 +28,21 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
     let device_name = format!("SmartMeter-House-{}", house_id);
 
-    let current_import = match demkit::get_energy_import(house_id).await {
+    let current_import = match demkit::meter::get_energy_import(house_id).await {
         Ok(measurement) => Some(measurement.value),
         Err(_) => None,
     };
-    let current_export = match demkit::get_energy_export(house_id).await {
+    let current_export = match demkit::meter::get_energy_export(house_id).await {
         Ok(measurement) => Some(measurement.value),
         Err(_) => None,
     };
 
-    let total_import = match demkit::get_device_property(&device_name, "imported").await {
+    let total_import = match demkit::devices::get_device_property(&device_name, "imported").await {
         Ok(value) => value,
         Err(_) => 0.0,
     };
 
-    let total_export = match demkit::get_device_property(&device_name, "exported").await {
+    let total_export = match demkit::devices::get_device_property(&device_name, "exported").await {
         Ok(value) => value,
         Err(_) => 0.0,
     };
@@ -61,9 +61,9 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[get("/import")]
 async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
-    let (house_id, meter_id) = id.into_inner();
+    let (house_id, _meter_id) = id.into_inner();
 
-    let import = demkit::get_energy_import(house_id).await;
+    let import = demkit::meter::get_energy_import(house_id).await;
 
     match import {
         Ok(measurement) => HttpResponse::Ok().json(measurement),
@@ -73,9 +73,9 @@ async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[get("/export")]
 async fn get_export(id: web::Path<(u32, u32)>) -> impl Responder {
-    let (house_id, meter_id) = id.into_inner();
+    let (house_id, _meter_id) = id.into_inner();
 
-    let import = demkit::get_energy_export(house_id).await;
+    let import = demkit::meter::get_energy_export(house_id).await;
 
     match import {
         Ok(measurement) => HttpResponse::Ok().json(measurement),
