@@ -17,6 +17,8 @@ pub struct BatteryProperties {
     pub strict_comfort: bool,
     pub consumption: Commodities,
     pub soc: f64,
+    #[serde(rename = "targetSoC")]
+    pub target_soc: f64,
     pub cop: f64,
     pub capacity: f64,
     #[serde(rename = "chargingPowers")]
