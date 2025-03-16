@@ -9,10 +9,12 @@ pub async fn get_energy_import(house_id: u32) -> Result<Measurement, ApiError> {
 
     let response_body = response.json::<Commodities>().await?;
 
-    let power = parse_complex_str(&response_body.electricity)?;
+    let power = parse_complex_str(&response_body.electricity.expect("Electricity commodity not found"))?;
+
+    let cons = power.norm() * power.re.signum();
 
     Ok(Measurement {
-        value: power.norm().max(0.0),
+        value: cons.max(0.0),
         unit: String::from("W"),
     })
 }
@@ -26,10 +28,12 @@ pub async fn get_energy_export(house_id: u32) -> Result<Measurement, ApiError> {
 
     let response_body = response.json::<Commodities>().await?;
 
-    let power = parse_complex_str(&response_body.electricity)?;
+    let power = parse_complex_str(&response_body.electricity.expect("Electricity commodity not found"))?;
+
+    let cons = -power.norm() * power.re.signum();
 
     Ok(Measurement {
-        value: power.norm().min(0.0),
+        value: cons.min(0.0),
         unit: String::from("W"),
     })
 }

@@ -18,7 +18,7 @@ pub struct BatteryProperties {
     pub consumption: Commodities,
     pub soc: f64,
     #[serde(rename = "targetSoC")]
-    pub target_soc: f64,
+    pub target_soc: Option<f64>,
     pub cop: f64,
     pub capacity: f64,
     #[serde(rename = "chargingPowers")]
@@ -46,8 +46,29 @@ pub async fn get_battery_properties(house_id: u32) -> Result<BatteryProperties, 
     let mut response_body = response.json::<BatteryProperties>().await?;
 
     response_body.electricity_consumption =
-        Some(parse_complex_str(&response_body.consumption.electricity)?);
+        Some(parse_complex_str(&response_body.consumption.electricity.clone().expect("Electricity commodity not found"))?);
 
     Ok(response_body)
 }
 
+pub async fn set_target_soc(house_id: u32, soc: Option<u32>) -> Result<BatteryProperties, ApiError> {
+    let client = CLIENT.get_or_init(init);
+
+    let soc = match soc {
+        Some(soc) => soc.to_string(),
+        None => "None".to_string(),
+    };
+
+    let url = format!("{}/set/Battery-House-{house_id}/targetSoC/{soc}", BASE_URL);
+
+    let response = client.get(url).send().await?;
+
+    let success = response.json::<bool>().await?;
+
+    if success {
+        get_battery_properties(house_id).await
+    } else {
+        Err(ApiError::DemkitError("Failed to set target SoC".to_string()))
+    }
+
+}

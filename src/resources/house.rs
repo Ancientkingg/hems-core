@@ -2,7 +2,7 @@ use actix_web::{get, web, HttpResponse, Responder};
 
 #[path = "devices/devices.rs"]
 mod devices;
-use devices::{battery, meter, solar};
+use devices::{battery, meter, solar, thermal};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
@@ -10,7 +10,8 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .service(get_by_id)
             .configure(battery::configure)
             .configure(meter::configure)
-            .configure(solar::configure),
+            .configure(solar::configure)
+            .configure(thermal::configure),
     );
 }
 

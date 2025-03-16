@@ -38,7 +38,7 @@ pub async fn get_solar_properties(house_id: u32) -> Result<SolarProperties, ApiE
     let mut response_body = response.json::<SolarProperties>().await?;
 
     response_body.electricity_consumption =
-        Some(parse_complex_str(&response_body.original_consumption.electricity)?);
+        Some(parse_complex_str(&response_body.original_consumption.electricity.clone().expect("Electricity commodity not found"))?);
 
     Ok(response_body)
 }
