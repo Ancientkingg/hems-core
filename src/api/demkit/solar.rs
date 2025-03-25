@@ -23,7 +23,7 @@ pub struct SolarProperties {
     #[serde(rename = "onOffDevice")]
     pub on_off_device: bool,
     #[serde(rename = "originalConsumption")]
-    pub original_consumption: Commodities,
+    _consumption: Commodities,
 
     pub electricity_consumption: Option<Complex<f64>>,
 }
@@ -38,7 +38,7 @@ pub async fn get_solar_properties(house_id: u32) -> Result<SolarProperties, ApiE
     let mut response_body = response.json::<SolarProperties>().await?;
 
     response_body.electricity_consumption =
-        Some(parse_complex_str(&response_body.original_consumption.electricity.clone().expect("Electricity commodity not found"))?);
+        Some(parse_complex_str(&response_body._consumption.electricity.clone().expect("Electricity commodity not found"))?);
 
     Ok(response_body)
 }

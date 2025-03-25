@@ -67,3 +67,13 @@ fn parse_complex_str(
     }
 }
 
+
+pub async fn get_time() -> u64 {
+    let client = CLIENT.get_or_init(init);
+
+    let url = format!("{}/time", BASE_URL);
+
+    let response = client.get(url).send().await.unwrap();
+
+    response.json::<u64>().await.unwrap()
+}
