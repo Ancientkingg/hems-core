@@ -9,6 +9,7 @@ pub mod battery;
 pub mod meter;
 pub mod solar;
 pub mod thermal;
+pub mod timeshifters;
 pub mod devices;
 
 
@@ -53,7 +54,6 @@ pub enum ApiError {
     ParseError(#[from] ParseComplexError<ParseFloatError>),
     #[error("DEMKIT API error")]
     DemkitError(String),
-    
 }
 
 fn parse_complex_str(
