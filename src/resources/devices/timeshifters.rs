@@ -1,6 +1,6 @@
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use num_complex::Complex;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::api::demkit::{self, timeshifters::{Job, ScheduleJob, TimeShifters}, Measurement};
 
