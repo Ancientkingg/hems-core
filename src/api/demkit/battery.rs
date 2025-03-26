@@ -43,7 +43,7 @@ pub async fn get_battery_properties(house_id: u32) -> Result<BatteryProperties, 
 
     let response = client.get(url).send().await?;
 
-    let mut response_body = response.json::<BatteryProperties>().await?;
+    let mut response_body: BatteryProperties = response.json::<BatteryProperties>().await?;
 
     response_body.electricity_consumption =
         Some(parse_complex_str(&response_body.consumption.electricity.clone().expect("Electricity commodity not found"))?);

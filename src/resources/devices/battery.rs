@@ -67,7 +67,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
         Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
     };
 
-    let battery_info = BatteryInfo::from(bp);
+    let battery_info: BatteryInfo = BatteryInfo::from(bp);
 
     HttpResponse::Ok().json(battery_info)
 }
