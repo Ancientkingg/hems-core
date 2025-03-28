@@ -18,8 +18,6 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .service(api::health)
-            .service(api::get_entity_consumption)
-            .service(api::add_entity)
             .configure(house::configure)
     })
     .bind(("0.0.0.0", 8080))?
