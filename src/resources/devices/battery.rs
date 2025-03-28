@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{get, web, HttpResponse, Responder};
 use serde::Serialize;
 
 use crate::api::demkit::{self, battery::BatteryProperties};
@@ -30,7 +30,6 @@ struct BatteryInfo {
     consumption: f64,
 }
 
-// write From trait for BatteryProperties
 impl From<BatteryProperties> for BatteryInfo {
     fn from(bp: BatteryProperties) -> Self {
         let elec = bp.electricity_consumption.unwrap();

@@ -10,7 +10,7 @@ pub struct ZoneProperties {
     #[serde(rename = "valveHeat")]
     pub valve_heat: f64,
     #[serde(rename = "consumption")]
-    pub original_consumption: Commodities,
+    _consumption: Commodities,
     pub heat_consumption: Option<Complex<f64>>,
 }
 
@@ -34,7 +34,7 @@ pub async fn get_current_zone_temp(house_id: u32) -> Result<ZoneProperties, ApiE
 
     let mut response_body = response.json::<ZoneProperties>().await?;
     response_body.heat_consumption =
-        Some(parse_complex_str(&response_body.original_consumption.heat.clone().expect("Heat commodity not found"))?);
+        Some(parse_complex_str(&response_body._consumption.heat.clone().expect("Heat commodity not found"))?);
 
     Ok(response_body)
 }

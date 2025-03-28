@@ -9,6 +9,7 @@ pub mod battery;
 pub mod meter;
 pub mod solar;
 pub mod thermal;
+pub mod timeshifters;
 pub mod devices;
 pub mod ha_entity;
 
@@ -54,7 +55,6 @@ pub enum ApiError {
     ParseError(#[from] ParseComplexError<ParseFloatError>),
     #[error("DEMKIT API error")]
     DemkitError(String),
-    
 }
 
 fn parse_complex_str(
@@ -68,3 +68,13 @@ fn parse_complex_str(
     }
 }
 
+
+pub async fn get_time() -> u64 {
+    let client = CLIENT.get_or_init(init);
+
+    let url = format!("{}/time", BASE_URL);
+
+    let response = client.get(url).send().await.unwrap();
+
+    response.json::<u64>().await.unwrap()
+}
