@@ -2,7 +2,7 @@ use actix_web::{get, web, HttpResponse, Responder};
 
 #[path = "devices/devices.rs"]
 mod devices;
-use devices::{battery, meter, solar, thermal, timeshifters};
+use devices::{battery, ha_entity, meter, solar, thermal, timeshifters};
 
 use crate::api::demkit;
 
@@ -15,7 +15,8 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
             .configure(meter::configure)
             .configure(solar::configure)
             .configure(thermal::configure)
-            .configure(timeshifters::configure),
+            .configure(timeshifters::configure)
+            .configure(ha_entity::configure),
     );
 }
 

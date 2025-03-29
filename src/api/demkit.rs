@@ -11,6 +11,7 @@ pub mod solar;
 pub mod thermal;
 pub mod timeshifters;
 pub mod devices;
+pub mod ha_entity;
 
 
 const BASE_URL: &str = "http://localhost:5000";
