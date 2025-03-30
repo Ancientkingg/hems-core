@@ -48,13 +48,13 @@ pub struct Commodities {
 
 #[derive(thiserror::Error, Debug)]
 pub enum ApiError {
-    #[error("Request failed")]
+    #[error("Request failed: {0}")]
     ReqwestError(#[from] reqwest::Error),
-    #[error("Serde error")]
+    #[error("Serde error: {0}")]
     SerdeError(#[from] serde_json::Error),
-    #[error("Parse error")]
+    #[error("Parse error: {0}")]
     ParseError(#[from] ParseComplexError<ParseFloatError>),
-    #[error("DEMKIT API error")]
+    #[error("DEMKIT API error: {0}")]
     DemkitError(String),
 }
 

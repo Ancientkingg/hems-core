@@ -1,12 +1,14 @@
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use serde::Serialize;
 
-use crate::api::demkit::{self, battery::BatteryProperties};
+use crate::api::demkit::{self, battery::BatteryProperties, env::BatteryEntityParams};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/battery/{id}")
             .service(get_by_id)
+            .service(add_by_id)
+            .service(remove_by_id)
             .service(set_target_soc)
             .service(set_target_soc_none),
     );
@@ -69,6 +71,31 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let battery_info = BatteryInfo::from(bp);
 
     HttpResponse::Ok().json(battery_info)
+}
+
+#[post("")]
+async fn add_by_id(
+    id: web::Path<(u32, String)>,
+    _params: web::Json<BatteryEntityParams>,
+) -> impl Responder {
+    let (house_id, entity_name) = id.into_inner();
+
+    match demkit::env::add_battery(house_id).await {
+        Ok(_) => HttpResponse::Ok().body(format!("{entity_name} added successfully")),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
+    };
+
+    HttpResponse::Ok().body(format!("{entity_name} added successfully"))
+}
+
+#[delete("")]
+async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
+    let (house_id, entity_name) = id.into_inner();
+
+    match demkit::env::remove_entity(house_id, entity_name.as_str()).await {
+        Ok(_) => HttpResponse::Ok().body(format!("{entity_name} removed successfully")),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
+    }
 }
 
 #[get("/target/{soc}")]

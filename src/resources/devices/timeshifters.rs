@@ -2,12 +2,14 @@ use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use num_complex::Complex;
 use serde::Serialize;
 
-use crate::api::demkit::{self, timeshifters::{Job, ScheduleJob, TimeShifters}, Measurement};
+use crate::api::demkit::{self, env::TimeShifterEntityParams, timeshifters::{Job, ScheduleJob, TimeShifters}, Measurement};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/timeshifters/{id}")
             .service(get_by_id)
+            .service(add_by_id)
+            .service(remove_by_id)
             .service(schedule_job)
             .service(cancel_job)
             .service(force_shutdown),
@@ -60,6 +62,28 @@ async fn get_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     };
 
     HttpResponse::Ok().json(device_status)
+}
+
+#[post("")]
+async fn add_by_id(id: web::Path<(u32, String)>, params: web::Json<TimeShifterEntityParams>) -> impl Responder {
+    let (house_id, entity_name) = id.into_inner();
+
+    match demkit::env::add_timeshifter(house_id, params.into_inner()).await {
+        Ok(_) => HttpResponse::Ok().body(format!("{entity_name} added successfully")),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
+    };
+
+    HttpResponse::Ok().body(format!("{entity_name} added successfully"))
+}
+
+#[delete("")]
+async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
+    let (house_id, entity_name) = id.into_inner();
+
+    match demkit::env::remove_entity(house_id, entity_name.as_str()).await {
+        Ok(_) => HttpResponse::Ok().body(format!("{entity_name} removed successfully")),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error: {:?}", e)),
+    }
 }
 
 #[post("/job")]
