@@ -30,3 +30,10 @@ async fn get_time() -> impl Responder {
     let current_time = demkit::get_time().await;
     HttpResponse::Ok().body(current_time.to_string())
 }
+
+#[get("/entities")]
+async fn list_entities() -> impl Responder {
+    let entities = demkit::list_entities().await;
+
+    HttpResponse::Ok().json(entities)
+}

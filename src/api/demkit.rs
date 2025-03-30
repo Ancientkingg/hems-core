@@ -78,3 +78,16 @@ pub async fn get_time() -> u64 {
 
     response.json::<u64>().await.unwrap()
 }
+
+
+pub async fn list_entities() -> Vec<String> {
+    let client = CLIENT.get_or_init(init);
+
+    let url = format!("{}/list", BASE_URL);
+
+    let response = client.get(url).send().await.unwrap();
+
+    let response_body = response.json::<Vec<String>>().await.unwrap();
+
+    response_body
+}
