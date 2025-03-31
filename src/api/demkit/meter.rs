@@ -33,7 +33,7 @@ pub async fn get_energy_export(house_id: u32) -> Result<Measurement, ApiError> {
     let cons = -power.norm() * power.re.signum();
 
     Ok(Measurement {
-        value: cons.min(0.0),
+        value: cons.max(0.0),
         unit: String::from("W"),
     })
 }
