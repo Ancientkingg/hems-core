@@ -7,6 +7,7 @@ use super::{init, ApiError, BASE_URL, CLIENT};
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SimConfig {
+    pub time_delay_base: u64,
     pub time_base: u64,
     pub time_offset: i64,
     pub time_zone: String,
