@@ -31,6 +31,8 @@ pub async fn get_entity_consumption(entity_id: &str) -> Result<EntityState, ApiE
             entity_id: entity_id.to_string(),
             consumption: consumption,
         });
+    } else if response_body.consumption.parse::<f64>().is_err() {
+        return Err(ApiError::LoadMapError("Device not found in load map".to_string()));
     }
 
     return Ok(EntityState {

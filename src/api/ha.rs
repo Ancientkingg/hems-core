@@ -27,6 +27,8 @@ pub enum ApiError {
     SerdeError(#[from] serde_json::Error),
     #[error("Home Assistant API error: {0}")]
     HomeAssistantError(String),
+    #[error("LOAD_MAP error: {0}")]
+    LoadMapError(String),
 }
 
 #[allow(dead_code)]
