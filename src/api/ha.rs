@@ -23,7 +23,7 @@ pub fn init_load_map() -> RwLock<HashMap<String, String>> {
 pub enum ApiError {
     #[error("Request failed: {0}")]
     ReqwestError(#[from] reqwest::Error),
-    #[error("Serde error; {0}")]
+    #[error("Serde error: {0}")]
     SerdeError(#[from] serde_json::Error),
     #[error("Home Assistant API error: {0}")]
     HomeAssistantError(String),
