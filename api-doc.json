@@ -1,0 +1,1472 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "utoipa-actix-web",
+    "description": "Utoipa's actix-web bindings for seamless integration of the two",
+    "contact": {
+      "name": "Juha Kukkonen",
+      "email": "juha7kukkonen@gmail.com"
+    },
+    "license": {
+      "name": "MIT OR Apache-2.0",
+      "identifier": "MIT OR Apache-2.0"
+    },
+    "version": "0.1.2"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Health check OK"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "battery_id",
+            "in": "path",
+            "description": "Battery ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get battery properties",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatteryInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid battery ID"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}/target": {
+      "get": {
+        "operationId": "set_target_soc_none",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "battery_id",
+            "in": "path",
+            "description": "Battery ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unset target SOC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatteryInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error unsetting target SOC"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}/target/{soc}": {
+      "get": {
+        "operationId": "set_target_soc",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "battery_id",
+            "in": "path",
+            "description": "Battery ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "soc",
+            "in": "path",
+            "description": "Target state of charge",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Set target SOC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatteryInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error setting target SOC"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{entity_name}": {
+      "post": {
+        "operationId": "add_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the battery entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatteryEntityParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Battery added successfully"
+          },
+          "500": {
+            "description": "Error adding battery"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "remove_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the battery entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Battery removed successfully"
+          },
+          "500": {
+            "description": "Error removing battery"
+          }
+        }
+      }
+    },
+    "/houses/{id}/entity/entity": {
+      "post": {
+        "operationId": "add_entity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Entity added successfully"
+          },
+          "500": {
+            "description": "Failed to add entity"
+          }
+        }
+      }
+    },
+    "/houses/{id}/entity/entity/{entity_name}/consumption": {
+      "get": {
+        "operationId": "get_entity_consumption",
+        "parameters": [
+          {
+            "name": "entity_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get entity consumption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get entity consumption"
+          }
+        }
+      }
+    },
+    "/houses/{id}/houses/{id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "responses": {
+          "200": {
+            "description": "House details",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "House not found"
+          }
+        }
+      },
+      "post": {
+        "operationId": "compose",
+        "responses": {
+          "200": {
+            "description": "House composed successfully"
+          },
+          "500": {
+            "description": "Error composing house"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "reset",
+        "responses": {
+          "200": {
+            "description": "House reset successfully"
+          },
+          "500": {
+            "description": "Error resetting house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/houses/{id}/config": {
+      "post": {
+        "operationId": "set_config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "House config set successfully"
+          },
+          "500": {
+            "description": "Error setting house config"
+          }
+        }
+      }
+    },
+    "/houses/{id}/houses/{id}/entities": {
+      "get": {
+        "operationId": "list_entities",
+        "responses": {
+          "200": {
+            "description": "List of entities",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting entities"
+          }
+        }
+      }
+    },
+    "/houses/{id}/houses/{id}/load": {
+      "post": {
+        "operationId": "load",
+        "responses": {
+          "200": {
+            "description": "House loaded successfully"
+          },
+          "500": {
+            "description": "Error loading house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/houses/{id}/time": {
+      "get": {
+        "operationId": "get_time",
+        "responses": {
+          "200": {
+            "description": "Current time",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting time"
+          }
+        }
+      }
+    },
+    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "responses": {
+          "200": {
+            "description": "Get meter information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeterInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get meter information"
+          }
+        }
+      }
+    },
+    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}/export": {
+      "get": {
+        "operationId": "get_export",
+        "responses": {
+          "200": {
+            "description": "Get energy export",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get energy export"
+          }
+        }
+      }
+    },
+    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}/import": {
+      "get": {
+        "operationId": "get_import",
+        "responses": {
+          "200": {
+            "description": "Get energy import",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get energy import"
+          }
+        }
+      }
+    },
+    "/houses/{id}/solar/{id}/solar/{house_id}/{entity_name}": {
+      "post": {
+        "operationId": "add_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the solar entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SolarEntityParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Add solar entity successfully"
+          },
+          "500": {
+            "description": "Failed to add solar entity"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "remove_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the solar entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Remove solar entity successfully"
+          },
+          "500": {
+            "description": "Failed to remove solar entity"
+          }
+        }
+      }
+    },
+    "/houses/{id}/solar/{id}/solar/{house_id}/{solar_id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "responses": {
+          "200": {
+            "description": "Get solar information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SolarInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get solar information"
+          }
+        }
+      }
+    },
+    "/houses/{id}/solar/{id}/solar/{house_id}/{solar_id}/toggle/{state}": {
+      "get": {
+        "operationId": "toggle",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "solar_id",
+            "in": "path",
+            "description": "Solar ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "state",
+            "in": "path",
+            "description": "State to toggle to",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Toggle solar state successfully"
+          },
+          "500": {
+            "description": "Failed to toggle solar state"
+          }
+        }
+      }
+    },
+    "/houses/{id}/thermal/{id}/thermal/{house_id}/{thermal_id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "thermal_id",
+            "in": "path",
+            "description": "Thermal ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get thermal information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThermalInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get thermal information"
+          }
+        }
+      }
+    },
+    "/houses/{id}/thermal/{id}/thermal/{house_id}/{thermal_id}/target/{temp}": {
+      "post": {
+        "operationId": "set_target_temp",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "thermal_id",
+            "in": "path",
+            "description": "Thermal ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "temp",
+            "in": "path",
+            "description": "Target temperature",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Set target temperature successfully"
+          },
+          "500": {
+            "description": "Failed to set target temperature"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}": {
+      "get": {
+        "operationId": "get_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get timeshifter properties",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid entity name"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "operationId": "add_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeShifterEntityParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully added timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "remove_by_id",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/job": {
+      "post": {
+        "operationId": "schedule_job",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleJob"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully scheduled job for timeshifter entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/job/{job_id}": {
+      "delete": {
+        "operationId": "cancel_job",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "path",
+            "description": "Job ID to cancel",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully scheduled job for timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/shutdown": {
+      "post": {
+        "operationId": "force_shutdown",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully shut down timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatteryEntityParams": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "BatteryInfo": {
+        "type": "object",
+        "required": [
+          "capacity",
+          "max_charge",
+          "max_discharge",
+          "state_of_charge",
+          "status",
+          "consumption"
+        ],
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "consumption": {
+            "type": "number",
+            "format": "double"
+          },
+          "max_charge": {
+            "type": "number",
+            "format": "double"
+          },
+          "max_discharge": {
+            "type": "number",
+            "format": "double"
+          },
+          "state_of_charge": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BatteryStatus"
+          },
+          "target_soc": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "BatteryStatus": {
+        "type": "string",
+        "enum": [
+          "Charging",
+          "Discharging",
+          "Idle"
+        ]
+      },
+      "DeviceStatus": {
+        "type": "object",
+        "required": [
+          "house_id",
+          "entity_name",
+          "is_active",
+          "progress",
+          "active_job_idx",
+          "scheduled_jobs",
+          "consumption",
+          "profile"
+        ],
+        "properties": {
+          "active_job": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Job"
+              }
+            ]
+          },
+          "active_job_idx": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "consumption": {
+            "$ref": "#/components/schemas/Measurement"
+          },
+          "entity_name": {
+            "type": "string"
+          },
+          "house_id": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "profile": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InternalComplex"
+            }
+          },
+          "progress": {
+            "type": "number",
+            "format": "double"
+          },
+          "scheduled_jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            }
+          }
+        }
+      },
+      "EntityRequest": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "consumption"
+        ],
+        "properties": {
+          "consumption": {
+            "type": "string"
+          },
+          "entity_id": {
+            "type": "string"
+          }
+        }
+      },
+      "InternalComplex": {
+        "type": "object",
+        "required": [
+          "re",
+          "im"
+        ],
+        "properties": {
+          "im": {
+            "type": "number",
+            "format": "double"
+          },
+          "re": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "required": [
+          "startTime",
+          "endTime"
+        ],
+        "properties": {
+          "endTime": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "Measurement": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit"
+        ],
+        "properties": {
+          "unit": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "MeterInfo": {
+        "type": "object",
+        "required": [
+          "house_id",
+          "meter_id",
+          "total_import",
+          "total_export"
+        ],
+        "properties": {
+          "current_export": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double"
+          },
+          "current_import": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double"
+          },
+          "house_id": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "meter_id": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "total_export": {
+            "type": "number",
+            "format": "double"
+          },
+          "total_import": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ScheduleJob": {
+        "type": "object",
+        "required": [
+          "delay",
+          "duration"
+        ],
+        "properties": {
+          "delay": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "SimConfig": {
+        "type": "object",
+        "required": [
+          "timeDelayBase",
+          "timeBase",
+          "timeOffset",
+          "timeZone",
+          "intervals",
+          "startTime",
+          "database",
+          "dataPrefix",
+          "clearDB",
+          "extendedLogging",
+          "logDevices",
+          "logFlow",
+          "enablePersistence",
+          "weatherFile",
+          "irradianceFile",
+          "ventilationFile",
+          "gainFile",
+          "dhwFile",
+          "houseNum",
+          "useIslanding",
+          "photoVoltaicSettings",
+          "batterySettings",
+          "heatingSettings",
+          "useFillMethod",
+          "usePP",
+          "ctrlTimeBase",
+          "thermostatStartTimes",
+          "thermostatSetpoints"
+        ],
+        "properties": {
+          "batterySettings": {
+            "type": "string"
+          },
+          "clearDB": {
+            "type": "boolean"
+          },
+          "ctrlTimeBase": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "dataPrefix": {
+            "type": "string"
+          },
+          "database": {
+            "type": "string"
+          },
+          "dhwFile": {
+            "type": "string"
+          },
+          "enablePersistence": {
+            "type": "boolean"
+          },
+          "extendedLogging": {
+            "type": "boolean"
+          },
+          "gainFile": {
+            "type": "string"
+          },
+          "heatingSettings": {
+            "type": "string"
+          },
+          "houseNum": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "intervals": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "irradianceFile": {
+            "type": "string"
+          },
+          "logDevices": {
+            "type": "boolean"
+          },
+          "logFlow": {
+            "type": "boolean"
+          },
+          "photoVoltaicSettings": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "thermostatSetpoints": {
+            "type": "string"
+          },
+          "thermostatStartTimes": {
+            "type": "string"
+          },
+          "timeBase": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "timeDelayBase": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "timeOffset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "useFillMethod": {
+            "type": "boolean"
+          },
+          "useIslanding": {
+            "type": "boolean"
+          },
+          "usePP": {
+            "type": "boolean"
+          },
+          "ventilationFile": {
+            "type": "string"
+          },
+          "weatherFile": {
+            "type": "string"
+          }
+        }
+      },
+      "SolarEntityParams": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SolarInfo": {
+        "type": "object",
+        "required": [
+          "consumption"
+        ],
+        "properties": {
+          "consumption": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ThermalInfo": {
+        "type": "object",
+        "required": [
+          "current_temperature",
+          "target_temperature",
+          "heating_power",
+          "consumption"
+        ],
+        "properties": {
+          "consumption": {
+            "type": "number",
+            "format": "double"
+          },
+          "current_temperature": {
+            "type": "number",
+            "format": "double"
+          },
+          "heating_power": {
+            "type": "number",
+            "format": "double"
+          },
+          "target_temperature": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "TimeShifterEntityParams": {
+        "type": "object",
+        "required": [
+          "name",
+          "profile",
+          "timeBase"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InternalComplex"
+            }
+          },
+          "timeBase": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}

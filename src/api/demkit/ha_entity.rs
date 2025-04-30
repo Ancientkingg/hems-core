@@ -1,9 +1,10 @@
 use serde_json::json;
+use utoipa::ToSchema;
 
 use super::{ApiError, BASE_URL, CLIENT};
 use crate::api::ha::{LOAD_MAP, init_load_map};
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, ToSchema)]
 pub struct EntityRequest {
     entity_id: String,
     consumption: String,

@@ -1,6 +1,7 @@
 use std::vec;
 
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
+use utoipa_actix_web::scope;
 
 #[path = "devices/devices.rs"]
 pub mod devices;
@@ -8,9 +9,9 @@ pub use devices::{battery, ha_entity, meter, solar, thermal, timeshifters};
 
 use crate::api::demkit;
 
-pub fn configure(cfg: &mut web::ServiceConfig) {
+pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        web::scope("/houses/{id}")
+        scope::scope("/houses/{id}")
             .service(get_by_id)
             .service(get_time)
             .service(compose)
@@ -27,12 +28,28 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     );
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{id}",
+    responses(
+        (status = 200, description = "House details", body = String),
+        (status = 404, description = "House not found"),
+    ),
+)]
 #[get("")]
 async fn get_by_id(path: web::Path<u32>) -> impl Responder {
     HttpResponse::Ok().body(format!("House id: {}", path))
     // list entities and show /composer
 }
 
+#[utoipa::path(
+    post,
+    path = "/houses/{id}",
+    responses(
+        (status = 200, description = "House composed successfully"),
+        (status = 500, description = "Error composing house"),
+    ),
+)]
 #[post("")]
 async fn compose(path: web::Path<u32>) -> impl Responder {
     let house_id = path.into_inner();
@@ -150,6 +167,14 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 }
 
 
+#[utoipa::path(
+    delete,
+    path = "/houses/{id}",
+    responses(
+        (status = 200, description = "House reset successfully"),
+        (status = 500, description = "Error resetting house"),
+    ),
+)]
 #[delete("")]
 async fn reset(path: web::Path<u32>) -> impl Responder {
     let _house_id = path.into_inner();
@@ -161,6 +186,14 @@ async fn reset(path: web::Path<u32>) -> impl Responder {
     HttpResponse::Ok().body("House simulation reset successfully")
 }
 
+#[utoipa::path(
+    post,
+    path = "/houses/{id}/load",
+    responses(
+        (status = 200, description = "House loaded successfully"),
+        (status = 500, description = "Error loading house"),
+    ),
+)]
 #[post("/load")]
 async fn load(path: web::Path<u32>) -> impl Responder {
     let _house_id = path.into_inner();
@@ -177,6 +210,14 @@ async fn load(path: web::Path<u32>) -> impl Responder {
     HttpResponse::Ok().body("House simulation loaded successfully and currently running")
 }
 
+#[utoipa::path(
+    post,
+    path = "/houses/{id}/config",
+    responses(
+        (status = 200, description = "House config set successfully"),
+        (status = 500, description = "Error setting house config"),
+    ),
+)]
 #[post("/config")]
 async fn set_config(_path: web::Path<u32>, config: web::Json<demkit::env::SimConfig>) -> impl Responder {
     match demkit::env::set_config(config.into_inner()).await {
@@ -187,12 +228,28 @@ async fn set_config(_path: web::Path<u32>, config: web::Json<demkit::env::SimCon
     HttpResponse::Ok().body("House config set successfully")
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{id}/time",
+    responses(
+        (status = 200, description = "Current time", body = String),
+        (status = 500, description = "Error getting time"),
+    ),
+)]
 #[get("/time")]
 async fn get_time() -> impl Responder {
     let current_time = demkit::get_time().await;
     HttpResponse::Ok().body(current_time.to_string())
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{id}/entities",
+    responses(
+        (status = 200, description = "List of entities", body = String),
+        (status = 500, description = "Error getting entities"),
+    ),
+)]
 #[get("/entities")]
 async fn list_entities() -> impl Responder {
     let entities = demkit::list_entities().await;

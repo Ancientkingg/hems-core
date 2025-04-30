@@ -1,10 +1,11 @@
 use num_complex::Complex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use utoipa::ToSchema;
 
 use super::{init, ApiError, BASE_URL, CLIENT};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct SimConfig {
     pub time_delay_base: u64,
@@ -59,20 +60,35 @@ pub struct SunEntityParams {
     pub name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct InternalComplex {
+    re: f64,
+    im: f64,
+}
+
+impl From<Complex<f64>> for InternalComplex {
+    fn from(complex: Complex<f64>) -> Self {
+        InternalComplex {
+            re: complex.re,
+            im: complex.im,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct TimeShifterEntityParams {
     pub name: String,
-    pub profile: Vec<Complex<f64>>,
+    pub profile: Vec<InternalComplex>,
     pub time_base: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct BatteryEntityParams {
     pub name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct SolarEntityParams {
     pub name: String,
 }

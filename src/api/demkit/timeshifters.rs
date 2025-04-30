@@ -146,7 +146,7 @@ pub struct TimeShifterInfo {
     pub job_progress: f64,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct ScheduleJob {
     delay: u64,
     duration: u64,

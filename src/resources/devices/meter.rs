@@ -1,18 +1,20 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::Serialize;
+use utoipa::ToSchema;
+use utoipa_actix_web::scope;
 
 use crate::api::demkit;
 
-pub fn configure(cfg: &mut web::ServiceConfig) {
+pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        web::scope("/meters/{id}")
+        scope::scope("/meters/{id}")
             .service(get_by_id)
             .service(get_import)
             .service(get_export),
     );
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 struct MeterInfo {
     house_id: u32,
     meter_id: u32,
@@ -22,6 +24,14 @@ struct MeterInfo {
     current_export: Option<f64>,
 }
 
+#[utoipa::path(
+    get,
+    path = "/meters/{house_id}/{meter_id}",
+    responses(
+        (status = 200, description = "Get meter information", body = MeterInfo),
+        (status = 500, description = "Failed to get meter information"),
+    ),
+)]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let (house_id, meter_id) = id.into_inner();
@@ -59,6 +69,14 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     HttpResponse::Ok().json(meter_info)
 }
 
+#[utoipa::path(
+    get,
+    path = "/meters/{house_id}/{meter_id}/import",
+    responses(
+        (status = 200, description = "Get energy import", body = f64),
+        (status = 500, description = "Failed to get energy import"),
+    ),
+)]
 #[get("/import")]
 async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
     let (house_id, _meter_id) = id.into_inner();
@@ -71,6 +89,14 @@ async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/meters/{house_id}/{meter_id}/export",
+    responses(
+        (status = 200, description = "Get energy export", body = f64),
+        (status = 500, description = "Failed to get energy export"),
+    ),
+)]
 #[get("/export")]
 async fn get_export(id: web::Path<(u32, u32)>) -> impl Responder {
     let (house_id, _meter_id) = id.into_inner();

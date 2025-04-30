@@ -1,11 +1,13 @@
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use serde::Serialize;
+use utoipa::ToSchema;
+use utoipa_actix_web::scope;
 
 use crate::api::demkit::{self, env::SolarEntityParams};
 
-pub fn configure(cfg: &mut web::ServiceConfig) {
+pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        web::scope("/solar/{id}")
+        scope::scope("/solar/{id}")
             .service(get_by_id)
             .service(add_by_id)
             .service(remove_by_id)
@@ -13,11 +15,19 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     );
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 struct SolarInfo {
     consumption: f64
 }
 
+#[utoipa::path(
+    get,
+    path = "/solar/{house_id}/{solar_id}",
+    responses(
+        (status = 200, description = "Get solar information", body = SolarInfo),
+        (status = 500, description = "Failed to get solar information"),
+    ),
+)]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let (_house_id, solar_id) = id.into_inner();
@@ -34,6 +44,19 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     HttpResponse::Ok().json(solar_info)
 }
 
+#[utoipa::path(
+    post,
+    path = "/solar/{house_id}/{entity_name}",
+    request_body = SolarEntityParams,
+    responses(
+        (status = 200, description = "Add solar entity successfully"),
+        (status = 500, description = "Failed to add solar entity"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the solar entity"),
+    )
+)]
 #[post("")]
 async fn add_by_id(
     id: web::Path<(u32, String)>,
@@ -49,6 +72,17 @@ async fn add_by_id(
     HttpResponse::Ok().body(format!("{entity_name} added successfully"))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/solar/{house_id}/{entity_name}",
+    responses(
+        (status = 200, description = "Remove solar entity successfully"),
+        (status = 500, description = "Failed to remove solar entity"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the solar entity"))
+)]
 #[delete("")]
 async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     let (house_id, entity_name) = id.into_inner();
@@ -59,6 +93,19 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/solar/{house_id}/{solar_id}/toggle/{state}",
+    responses(
+        (status = 200, description = "Toggle solar state successfully"),
+        (status = 500, description = "Failed to toggle solar state"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("solar_id" = u32, description = "Solar ID"),
+        ("state" = bool, description = "State to toggle to"),
+    ),
+)]
 #[get("/toggle/{state}")]
 async fn toggle(id: web::Path<(u32, u32, bool)>) -> impl Responder {
     let (house_id, _solar_id, state) = id.into_inner();

@@ -1,11 +1,13 @@
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use serde::Serialize;
+use utoipa::ToSchema;
+use utoipa_actix_web::scope;
 
 use crate::api::demkit::{self, battery::BatteryProperties, env::BatteryEntityParams};
 
-pub fn configure(cfg: &mut web::ServiceConfig) {
+pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        web::scope("/battery/{id}")
+        scope::scope("/battery/{id}")
             .service(get_by_id)
             .service(add_by_id)
             .service(remove_by_id)
@@ -14,14 +16,14 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     );
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 enum BatteryStatus {
     Charging,
     Discharging,
     Idle,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 struct BatteryInfo {
     capacity: f64,
     max_charge: f64,
@@ -59,6 +61,19 @@ impl From<BatteryProperties> for BatteryInfo {
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{house_id}/battery/{battery_id}",
+    responses(
+        (status = 200, description = "Get battery properties", body = BatteryInfo),
+        (status = 400, description = "Invalid battery ID"),
+        (status = 500, description = "Internal server error"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("battery_id" = u32, description = "Battery ID"),
+    )
+)]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let (house_id, _battery_id) = id.into_inner();
@@ -73,6 +88,18 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     HttpResponse::Ok().json(battery_info)
 }
 
+#[utoipa::path(
+    post,
+    path = "/houses/{house_id}/battery/{entity_name}",
+    responses(
+        (status = 200, description = "Battery added successfully"),
+        (status = 500, description = "Error adding battery"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the battery entity"),
+    )
+)]
 #[post("")]
 async fn add_by_id(
     id: web::Path<(u32, String)>,
@@ -88,6 +115,18 @@ async fn add_by_id(
     HttpResponse::Ok().body(format!("{entity_name} added successfully"))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/houses/{house_id}/battery/{entity_name}",
+    responses(
+        (status = 200, description = "Battery removed successfully"),
+        (status = 500, description = "Error removing battery"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the battery entity"),
+    )
+)]
 #[delete("")]
 async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     let (house_id, entity_name) = id.into_inner();
@@ -98,6 +137,19 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{house_id}/battery/{battery_id}/target/{soc}",
+    responses(
+        (status = 200, description = "Set target SOC", body = BatteryInfo),
+        (status = 500, description = "Error setting target SOC"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("battery_id" = u32, description = "Battery ID"),
+        ("soc" = u32, description = "Target state of charge"),
+    )
+)]
 #[get("/target/{soc}")]
 async fn set_target_soc(id: web::Path<(u32, u32, u32)>) -> impl Responder {
     let (house_id, _battery_id, target_soc) = id.into_inner();
@@ -112,6 +164,18 @@ async fn set_target_soc(id: web::Path<(u32, u32, u32)>) -> impl Responder {
     HttpResponse::Ok().json(battery_info)
 }
 
+#[utoipa::path(
+    get,
+    path = "/houses/{house_id}/battery/{battery_id}/target",
+    responses(
+        (status = 200, description = "Unset target SOC", body = BatteryInfo),
+        (status = 500, description = "Error unsetting target SOC"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("battery_id" = u32, description = "Battery ID"),
+    )
+)]
 #[get("/target")]
 async fn set_target_soc_none(id: web::Path<(u32, u32)>) -> impl Responder {
     let (house_id, _battery_id) = id.into_inner();

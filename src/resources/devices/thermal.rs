@@ -1,18 +1,20 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::Serialize;
 use serde_json::json;
+use utoipa::ToSchema;
+use utoipa_actix_web::scope;
 
 use crate::api::demkit;
 
-pub fn configure(cfg: &mut web::ServiceConfig) {
+pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        web::scope("/thermal/{id}")
+        scope::scope("/thermal/{id}")
             .service(get_by_id)
             .service(set_target_temp),
     );
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 struct ThermalInfo {
     current_temperature: f64,
     target_temperature: f64,
@@ -20,6 +22,18 @@ struct ThermalInfo {
     consumption: f64,
 }
 
+#[utoipa::path(
+    get,
+    path = "/thermal/{house_id}/{thermal_id}",
+    responses(
+        (status = 200, description = "Get thermal information", body = ThermalInfo),
+        (status = 500, description = "Failed to get thermal information"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("thermal_id" = u32, description = "Thermal ID"),
+    ),
+)]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     let (_house_id, thermal_id) = id.into_inner();
@@ -46,6 +60,19 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
     HttpResponse::Ok().json(thermal_info)
 }
 
+#[utoipa::path(
+    post,
+    path = "/thermal/{house_id}/{thermal_id}/target/{temp}",
+    responses(
+        (status = 200, description = "Set target temperature successfully"),
+        (status = 500, description = "Failed to set target temperature"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("thermal_id" = u32, description = "Thermal ID"),
+        ("temp" = f64, description = "Target temperature"),
+    ),
+)]
 #[get("/target/{temp}")]
 async fn set_target_temp(id: web::Path<(u32, u32, f64)>) -> impl Responder {
     let (house_id, _thermal_id, temp) = id.into_inner();
