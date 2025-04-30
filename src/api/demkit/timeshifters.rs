@@ -5,10 +5,11 @@ use serde::{
     de::{self, MapAccess, SeqAccess, Visitor},
     Deserialize, Deserializer, Serialize,
 };
+use utoipa::ToSchema;
 
 use super::{init, parse_complex_str, ApiError, Commodities, Commodity, BASE_URL, CLIENT};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Job {
     pub start_time: u64,

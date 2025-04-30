@@ -14,6 +14,10 @@ async fn main() -> std::io::Result<()> {
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
+    let api_doc = api::docs::get_openapi();
+
+    println!("{}", api_doc.to_pretty_json().unwrap());
+
     HttpServer::new(|| {
         App::new()
             .wrap(Logger::default())

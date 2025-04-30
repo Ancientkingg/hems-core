@@ -1,6 +1,7 @@
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
 use num_complex::Complex;
 use serde::Serialize;
+use utoipa::ToSchema;
 
 use crate::api::demkit::{self, env::TimeShifterEntityParams, timeshifters::{Job, ScheduleJob, TimeShifters}, Measurement};
 
@@ -16,7 +17,22 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     );
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
+struct InternalComplex {
+    real: f64,
+    imag: f64,
+}
+
+impl From<Complex<f64>> for InternalComplex {
+    fn from(complex: Complex<f64>) -> Self {
+        InternalComplex {
+            real: complex.re,
+            imag: complex.im,
+        }
+    }
+}
+
+#[derive(Serialize, ToSchema)]
 struct DeviceStatus {
     house_id: u32,
     entity_name: String,
@@ -26,9 +42,21 @@ struct DeviceStatus {
     active_job_idx: i32,
     scheduled_jobs: Vec<Job>,
     consumption: Measurement,
-    profile: Vec<Complex<f64>>
+    profile: Vec<InternalComplex>
 }
-
+#[utoipa::path(
+    get,
+    path = "/houses/{house_id}/timeshifters/{entity_name}",
+    responses(
+        (status = 200, description = "Get timeshifter properties", body = DeviceStatus),
+        (status = 400, description = "Invalid entity name"),
+        (status = 500, description = "Internal server error"),
+    ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the timeshifter entity"),
+    )
+)]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, String)>) -> impl Responder {
     let (house_id, entity_name) = id.into_inner();
@@ -58,7 +86,10 @@ async fn get_by_id(id: web::Path<(u32, String)>) -> impl Responder {
             value: device_properties.electricity_consumption.unwrap().norm(),
             unit: "W".to_string(),
         },
-        profile: device_profile,
+        profile: device_profile
+            .iter()
+            .map(|complex| InternalComplex::from(*complex))
+            .collect(),
     };
 
     HttpResponse::Ok().json(device_status)

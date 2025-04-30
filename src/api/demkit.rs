@@ -3,6 +3,7 @@ use std::{num::ParseFloatError, str::FromStr, sync::OnceLock};
 use num_complex::{Complex, ParseComplexError};
 use reqwest;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 
 pub mod battery;
@@ -23,7 +24,7 @@ pub fn init() -> reqwest::Client {
     reqwest::Client::new()
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct Measurement {
     pub value: f64,
     pub unit: String,

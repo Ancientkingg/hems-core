@@ -3,8 +3,8 @@ use std::vec;
 use actix_web::{delete, get, post, web, HttpResponse, Responder};
 
 #[path = "devices/devices.rs"]
-mod devices;
-use devices::{battery, ha_entity, meter, solar, thermal, timeshifters};
+pub mod devices;
+pub use devices::{battery, ha_entity, meter, solar, thermal, timeshifters};
 
 use crate::api::demkit;
 
