@@ -16,17 +16,24 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[derive(Serialize, ToSchema)]
 struct MeterInfo {
+    /// House ID
     house_id: u32,
+    /// Meter ID
     meter_id: u32,
+    /// Total energy imported
     total_import: f64,
+    /// Total energy exported
     total_export: f64,
+    /// Current energy import
     current_import: Option<f64>,
+    /// Current energy export
     current_export: Option<f64>,
 }
 
 #[utoipa::path(
     get,
-    path = "",
+    tag = "Meter",
+    description = "Get properties of a meter device",
     responses(
         (status = 200, description = "Get meter information", body = MeterInfo),
         (status = 500, description = "Failed to get meter information"),
@@ -71,7 +78,8 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/import",
+    tag = "Meter",
+    description = "Get current energy import",
     responses(
         (status = 200, description = "Get energy import", body = f64),
         (status = 500, description = "Failed to get energy import"),
@@ -91,7 +99,8 @@ async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/export",
+    tag = "Meter",
+    description = "Get current energy export",
     responses(
         (status = 200, description = "Get energy export", body = f64),
         (status = 500, description = "Failed to get energy export"),

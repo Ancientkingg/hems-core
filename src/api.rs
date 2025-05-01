@@ -6,6 +6,7 @@ pub mod docs;
 
 #[utoipa::path(
     get,
+    description = "Health check endpoint",
     path = "/healthz",
     responses(
         (status = OK, description = "Health check OK"),

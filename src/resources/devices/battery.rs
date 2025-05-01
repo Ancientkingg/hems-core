@@ -18,19 +18,30 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[derive(Serialize, ToSchema)]
 enum BatteryStatus {
+    /// Battery is charging
     Charging,
+    /// Battery is discharging
     Discharging,
+    /// Battery is idle
     Idle,
 }
 
 #[derive(Serialize, ToSchema)]
 struct BatteryInfo {
+    /// Current battery capacity in Wh
     capacity: f64,
+    /// Maximum charging power in W
     max_charge: f64,
+    /// Maximum discharging power in W
     max_discharge: f64,
+    /// Current state of charge in percentage
     state_of_charge: f64,
+    /// Target state of charge in percentage
+    #[schema(nullable)]
     target_soc: Option<f64>,
+    /// Current battery status (charging, discharging, idle)
     status: BatteryStatus,
+    /// Current electricity consumption in W
     consumption: f64,
 }
 
@@ -63,7 +74,8 @@ impl From<BatteryProperties> for BatteryInfo {
 
 #[utoipa::path(
     get,
-    path = "",
+    tag = "Battery",
+    description = "Get battery properties.",
     responses(
         (status = 200, description = "Get battery properties", body = BatteryInfo),
         (status = 400, description = "Invalid battery ID"),
@@ -90,7 +102,8 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "",
+    tag = "Battery",
+    description = "Add a new battery entity.",
     responses(
         (status = 200, description = "Battery added successfully"),
         (status = 500, description = "Error adding battery"),
@@ -117,7 +130,8 @@ async fn add_by_id(
 
 #[utoipa::path(
     delete,
-    path = "",
+    tag = "Battery",
+    description = "Remove a battery entity from the house.",
     responses(
         (status = 200, description = "Battery removed successfully"),
         (status = 500, description = "Error removing battery"),
@@ -139,7 +153,8 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/target/{soc}",
+    tag = "Battery",
+    description = "Set battery target SoC",
     responses(
         (status = 200, description = "Set target SOC", body = BatteryInfo),
         (status = 500, description = "Error setting target SOC"),
@@ -166,7 +181,8 @@ async fn set_target_soc(id: web::Path<(u32, u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/target",
+    tag = "Battery",
+    description = "Unset target SoC",
     responses(
         (status = 200, description = "Unset target SOC", body = BatteryInfo),
         (status = 500, description = "Error unsetting target SOC"),

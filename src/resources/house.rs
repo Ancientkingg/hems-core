@@ -34,10 +34,15 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[utoipa::path(
     get,
+    tag = "House",
+    description = "Get house details",
     path = "",
     responses(
         (status = 200, description = "House details", body = String),
         (status = 404, description = "House not found"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[get("")]
@@ -48,10 +53,15 @@ async fn get_by_id(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Compose a house",
     path = "",
     responses(
         (status = 200, description = "House composed successfully"),
         (status = 500, description = "Error composing house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("")]
@@ -172,10 +182,15 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Pause the house simulation",
     path = "/pause",
     responses(
         (status = 200, description = "House paused successfully"),
         (status = 500, description = "Error pausing house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/pause")]
@@ -189,10 +204,15 @@ async fn pause_simulation(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Resume the house simulation",
     path = "/resume",
     responses(
         (status = 200, description = "House resumed successfully"),
         (status = 500, description = "Error resuming house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/resume")]
@@ -206,10 +226,15 @@ async fn resume_simulation(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Stop the house simulation",
     path = "/stop",
     responses(
         (status = 200, description = "House stopped successfully"),
         (status = 500, description = "Error stopping house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/stop")]
@@ -223,10 +248,15 @@ async fn stop_simulation(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Set the house time",
     path = "/time",
     responses(
         (status = 200, description = "House time set successfully"),
         (status = 500, description = "Error setting house time"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/time")]
@@ -243,10 +273,14 @@ async fn set_time(path: web::Path<u32>, time: web::Json<demkit::sim::Time>) -> i
 
 #[utoipa::path(
     delete,
-    path = "/houses/{id}",
+    tag = "House",
+    description = "Reset the house simulation",
     responses(
         (status = 200, description = "House reset successfully"),
         (status = 500, description = "Error resetting house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[delete("")]
@@ -262,10 +296,15 @@ async fn reset(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Load the house simulation",
     path = "/load",
     responses(
         (status = 200, description = "House loaded successfully"),
         (status = 500, description = "Error loading house"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/load")]
@@ -286,10 +325,16 @@ async fn load(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
+    tag = "House",
+    description = "Set the house configuration",
     path = "/config",
     responses(
         (status = 200, description = "House config set successfully"),
         (status = 500, description = "Error setting house config"),
+    ),
+    request_body = demkit::env::SimConfig,
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[post("/config")]
@@ -307,10 +352,15 @@ async fn set_config(
 
 #[utoipa::path(
     get,
+    tag = "House",
+    description = "Get the current time of the house",
     path = "/time",
     responses(
         (status = 200, description = "Current time", body = String),
         (status = 500, description = "Error getting time"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[get("/time")]
@@ -321,10 +371,15 @@ async fn get_time() -> impl Responder {
 
 #[utoipa::path(
     get,
+    tag = "House",
+    description = "List all entities in the house",
     path = "/entities",
     responses(
         (status = 200, description = "List of entities", body = String),
         (status = 500, description = "Error getting entities"),
+    ),
+    params(
+        ("id", description = "House ID", example = 1),
     ),
 )]
 #[get("/entities")]

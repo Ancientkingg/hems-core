@@ -16,15 +16,20 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[derive(Serialize, ToSchema)]
 struct ThermalInfo {
+    /// Current temperature in the zone in Celsius
     current_temperature: f64,
+    /// Target temperature set for the zone in Celsius
     target_temperature: f64,
+    /// Heating power
     heating_power: f64,
+    /// Heat consumption
     consumption: f64,
 }
 
 #[utoipa::path(
     get,
-    path = "",
+    tag = "Thermal",
+    description = "Get properties of a thermal device",
     responses(
         (status = 200, description = "Get thermal information", body = ThermalInfo),
         (status = 500, description = "Failed to get thermal information"),
@@ -62,7 +67,8 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/target/{temp}",
+    tag = "Thermal",
+    description = "Set target temperature for a thermal device",
     responses(
         (status = 200, description = "Set target temperature successfully"),
         (status = 500, description = "Failed to set target temperature"),

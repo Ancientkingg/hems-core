@@ -1,10 +1,18 @@
 use utoipa::OpenApi;
 
-use crate::resources::house::devices;
-
 
 #[derive(OpenApi)]
-#[openapi(paths(devices::timeshifters::get_by_id))]
+#[openapi(
+    info(
+        title = "Demkit API",
+        version = "1.0",
+        description = "API documentation for the Demkit project",
+        license(
+            name = "MIT",
+            url = "https://opensource.org/licenses/MIT"
+        ),
+    ),
+)]
 pub struct ApiDoc;
 
 pub fn get_openapi() -> utoipa::openapi::OpenApi {

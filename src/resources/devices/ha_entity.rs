@@ -13,14 +13,19 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[utoipa::path(
     get,
-    path = "/entity/{entity_name}/consumption",
+    tag = "Entity",
+    description = "Get entity consumption.",
     responses(
         (status = 200, description = "Get entity consumption", body = EntityRequest),
         (status = 500, description = "Failed to get entity consumption"),
     ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("entity_name" = String, description = "Name of the entity"),
+    ),
 )]
 #[get("/{entity_name}/consumption")]
-async fn get_entity_consumption(path: web::Path<(String, String)>) -> impl Responder {
+async fn get_entity_consumption(path: web::Path<(u32, String)>) -> impl Responder {
     let entity_name = path.into_inner().1;
     match entity::get_entity_consumption(&entity_name).await {
         Ok(entity_state) => HttpResponse::Ok().json(entity_state),
@@ -31,12 +36,17 @@ async fn get_entity_consumption(path: web::Path<(String, String)>) -> impl Respo
 
 #[utoipa::path(
     post,
-    path = "",
+    tag = "Entity",
+    description = "Add a new entity.",
     request_body = EntityRequest,
     responses(
         (status = 200, description = "Entity added successfully"),
         (status = 500, description = "Failed to add entity"),
     ),
+    request_body = EntityRequest,
+    params(
+        ("house_id" = u32, description = "House ID"),
+    )
 )]
 #[post("")]
 async fn add_entity(request: web::Json<EntityRequest>) -> impl Responder {

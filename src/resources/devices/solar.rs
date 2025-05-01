@@ -17,16 +17,22 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[derive(Serialize, ToSchema)]
 struct SolarInfo {
+    /// Current electricity consumption (can be negative to indicate generation)
     consumption: f64
 }
 
 #[utoipa::path(
     get,
-    path = "",
+    tag = "Solar",
+    description = "Get solar information.",
     responses(
         (status = 200, description = "Get solar information", body = SolarInfo),
         (status = 500, description = "Failed to get solar information"),
     ),
+    params(
+        ("house_id" = u32, description = "House ID"),
+        ("solar_id" = u32, description = "Solar ID"),
+    )
 )]
 #[get("")]
 async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
@@ -46,7 +52,8 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "",
+    tag = "Solar",
+    description = "Add a solar entity.",
     request_body = SolarEntityParams,
     responses(
         (status = 200, description = "Add solar entity successfully"),
@@ -74,7 +81,8 @@ async fn add_by_id(
 
 #[utoipa::path(
     delete,
-    path = "",
+    tag = "Solar",
+    description = "Remove a solar entity.",
     responses(
         (status = 200, description = "Remove solar entity successfully"),
         (status = 500, description = "Failed to remove solar entity"),
@@ -95,7 +103,8 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/toggle/{state}",
+    tag = "Solar",
+    description = "Get solar information.",
     responses(
         (status = 200, description = "Toggle solar state successfully"),
         (status = 500, description = "Failed to toggle solar state"),
