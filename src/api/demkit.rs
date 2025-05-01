@@ -1,6 +1,7 @@
 use std::{num::ParseFloatError, str::FromStr, sync::OnceLock};
 
 use num_complex::{Complex, ParseComplexError};
+use once_cell::sync::Lazy;
 use reqwest;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -16,8 +17,9 @@ pub mod ha_entity;
 pub mod env;
 pub mod sim;
 
-
-const BASE_URL: &str = "http://localhost:5000";
+static BASE_URL: Lazy<String> = Lazy::new(|| {
+    std::env::var("DEMKIT_URL").expect("DEMKIT_URL is not set")
+});
 
 static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
 
@@ -75,7 +77,7 @@ fn parse_complex_str(
 pub async fn get_time() -> u64 {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/time", BASE_URL);
+    let url = format!("{}/time", *BASE_URL);
 
     let response = client.get(url).send().await.unwrap();
 
@@ -86,7 +88,7 @@ pub async fn get_time() -> u64 {
 pub async fn list_entities() -> Vec<String> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/list", BASE_URL);
+    let url = format!("{}/list", *BASE_URL);
 
     let response = client.get(url).send().await.unwrap();
 

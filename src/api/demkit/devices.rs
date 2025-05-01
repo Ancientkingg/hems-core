@@ -40,7 +40,7 @@ where
 {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/get/{device_name}/{property}", BASE_URL);
+    let url = format!("{}/get/{device_name}/{property}", *BASE_URL);
 
     let response = client.get(url).send().await?;
 

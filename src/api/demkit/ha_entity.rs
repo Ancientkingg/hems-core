@@ -14,7 +14,7 @@ pub async fn add_entity(entity: EntityRequest) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(super::init);
     let mut load_map = LOAD_MAP.get_or_init(init_load_map).write().unwrap();
 
-    let url = format!("{}/entity", BASE_URL);
+    let url = format!("{}/entity", *BASE_URL);
 
     let request_json = json!({"entity_id": entity.entity_id});
 

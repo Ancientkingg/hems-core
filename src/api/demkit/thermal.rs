@@ -27,7 +27,7 @@ pub async fn get_current_zone_temp(house_id: u32) -> Result<ZoneProperties, ApiE
 
     let url = format!(
         "{}/call/Zone-House-{house_id}/getProperties",
-        BASE_URL
+        *BASE_URL
     );
 
     let response = client.get(url).send().await?;
@@ -44,7 +44,7 @@ pub async fn get_thermostat_properties(house_id: u32) -> Result<ThermostatProper
 
     let url = format!(
         "{}/call/Thermostat-House-{house_id}/getProperties",
-        BASE_URL
+        *BASE_URL
     );
 
     let response = client.get(url).send().await?;
@@ -68,22 +68,22 @@ pub async fn set_target_temp(house_id: u32, temp: f64) -> Result<(), ApiError> {
 
     let url_min = format!(
         "{}/set/Thermostat-House-{house_id}/temperatureSetpointHeating/{target_temp_min}",
-        BASE_URL
+        *BASE_URL
     );
 
     let url_min_away = format!(
         "{}/set/Thermostat-House-{house_id}/temperatureMin/{target_temp_min}",
-        BASE_URL
+        *BASE_URL
     );
 
     let url_max = format!(
         "{}/set/Thermostat-House-{house_id}/temperatureSetpointCooling/{target_temp_max}",
-        BASE_URL
+        *BASE_URL
     );
 
     let url_max_away = format!(
         "{}/set/Thermostat-House-{house_id}/temperatureMax/{target_temp_max}",
-        BASE_URL
+        *BASE_URL
     );
 
     client.get(url_min).send().await?;
