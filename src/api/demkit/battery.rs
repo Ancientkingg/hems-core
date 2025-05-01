@@ -39,7 +39,7 @@ pub struct BatteryProperties {
 pub async fn get_battery_properties(house_id: u32) -> Result<BatteryProperties, ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/call/Battery-House-{house_id}/getProperties", BASE_URL);
+    let url = format!("{}/call/Battery-House-{house_id}/getProperties", *BASE_URL);
 
     let response = client.get(url).send().await?;
 
@@ -59,7 +59,7 @@ pub async fn set_target_soc(house_id: u32, soc: Option<u32>) -> Result<BatteryPr
         None => "None".to_string(),
     };
 
-    let url = format!("{}/set/Battery-House-{house_id}/targetSoC/{soc}", BASE_URL);
+    let url = format!("{}/set/Battery-House-{house_id}/targetSoC/{soc}", *BASE_URL);
 
     let response = client.get(url).send().await?;
 

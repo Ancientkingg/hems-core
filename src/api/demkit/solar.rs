@@ -31,7 +31,7 @@ pub struct SolarProperties {
 pub async fn get_solar_properties(house_id: u32) -> Result<SolarProperties, ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/call/PV-House-{house_id}/getProperties", BASE_URL);
+    let url = format!("{}/call/PV-House-{house_id}/getProperties", *BASE_URL);
 
     let response = client.get(url).send().await?;
 
@@ -48,7 +48,7 @@ pub async fn set_solar_state(house_id: u32, state: bool) -> Result<(), ApiError>
 
     let state = if state { "True" } else { "False" };
 
-    let url = format!("{}/set/PV-House-{house_id}/onOffDevice/{state}", BASE_URL);
+    let url = format!("{}/set/PV-House-{house_id}/onOffDevice/{state}", *BASE_URL);
 
     client.get(url).send().await?;
 

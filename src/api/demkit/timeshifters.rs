@@ -161,7 +161,7 @@ pub async fn get_properties(
     let entity_name = entity.get_device_name();
     let entity_id = format!("{entity_name}-House-{house_id}");
 
-    let url = format!("{}/call/{entity_id}/getProperties", BASE_URL);
+    let url = format!("{}/call/{entity_id}/getProperties", *BASE_URL);
 
     let response = client.get(url).send().await?;
 
@@ -192,7 +192,7 @@ pub async fn get_jobs(house_id: u32, entity: TimeShifters) -> Result<Vec<Job>, A
     let entity_name = entity.get_device_name();
     let entity_id = format!("{entity_name}-House-{house_id}");
 
-    let url = format!("{}/get/{entity_id}/jobs", BASE_URL);
+    let url = format!("{}/get/{entity_id}/jobs", *BASE_URL);
 
     let response = client.get(url).send().await?;
 
@@ -211,7 +211,7 @@ pub async fn schedule_job(
     let entity_name = entity.get_device_name();
     let entity_id = format!("{entity_name}-House-{house_id}");
 
-    let url = format!("{}/callp/{entity_id}/scheduleJob", BASE_URL);
+    let url = format!("{}/callp/{entity_id}/scheduleJob", *BASE_URL);
 
     let body = [job.delay, job.duration];
     let response = client.put(url).json(&body).send().await?;
@@ -238,7 +238,7 @@ pub async fn cancel_job(house_id: u32, entity: TimeShifters, job_id: u32) -> Res
     let entity_name = entity.get_device_name();
     let entity_id = format!("{entity_name}-House-{house_id}");
 
-    let url = format!("{}/callp/{entity_id}/cancelJob", BASE_URL);
+    let url = format!("{}/callp/{entity_id}/cancelJob", *BASE_URL);
 
     let body = [job_id];
     let response = client.put(url).json(&body).send().await?;
@@ -257,7 +257,7 @@ pub async fn force_shutdown(house_id: u32, entity: TimeShifters) -> Result<(), A
     let entity_name = entity.get_device_name();
     let entity_id = format!("{entity_name}-House-{house_id}");
 
-    let url = format!("{}/call/{entity_id}/forceShutdown", BASE_URL);
+    let url = format!("{}/call/{entity_id}/forceShutdown", *BASE_URL);
 
     let response = client.get(url).send().await?;
 

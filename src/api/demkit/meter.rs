@@ -3,7 +3,7 @@ use super::{init, parse_complex_str, ApiError, Commodities, Measurement, BASE_UR
 pub async fn get_energy_import(house_id: u32) -> Result<Measurement, ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/get/SmartMeter-House-{house_id}/consumption", BASE_URL);
+    let url = format!("{}/get/SmartMeter-House-{house_id}/consumption", *BASE_URL);
 
     let response = client.get(url).send().await?;
 
@@ -22,7 +22,7 @@ pub async fn get_energy_import(house_id: u32) -> Result<Measurement, ApiError> {
 pub async fn get_energy_export(house_id: u32) -> Result<Measurement, ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/get/SmartMeter-House-{house_id}/consumption", BASE_URL);
+    let url = format!("{}/get/SmartMeter-House-{house_id}/consumption", *BASE_URL);
 
     let response = client.get(url).send().await?;
 

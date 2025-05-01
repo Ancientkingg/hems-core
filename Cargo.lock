@@ -804,6 +804,7 @@ dependencies = [
  "dotenv",
  "env_logger",
  "futures",
+ "log",
  "num-complex",
  "once_cell",
  "regex",

@@ -1,10 +1,12 @@
 use std::{collections::HashMap, sync::{OnceLock, RwLock}};
 
+use once_cell::sync::Lazy;
 use reqwest;
 use serde::{Deserialize, Serialize};
 
-const BASE_URL: &str = "http://localhost:8123";
-
+static BASE_URL: Lazy<String> = Lazy::new(|| {
+    std::env::var("HA_URL").expect("HA_URL is not set")
+});
 static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
 
 pub static LOAD_MAP: OnceLock<RwLock<HashMap<String, String>>> = OnceLock::new();
