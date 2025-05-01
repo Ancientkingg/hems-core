@@ -14,6 +14,7 @@ pub mod timeshifters;
 pub mod devices;
 pub mod ha_entity;
 pub mod env;
+pub mod sim;
 
 
 const BASE_URL: &str = "http://localhost:5000";

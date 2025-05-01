@@ -7,7 +7,7 @@ use crate::api::demkit::{self, env::{InternalComplex, TimeShifterEntityParams}, 
 
 pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
     cfg.service(
-        scope::scope("/timeshifters/{id}")
+        scope::scope("/timeshifters/{entity_name}")
             .service(get_by_id)
             .service(add_by_id)
             .service(remove_by_id)
@@ -31,7 +31,7 @@ struct DeviceStatus {
 }
 #[utoipa::path(
     get,
-    path = "/houses/{house_id}/timeshifters/{entity_name}",
+    path = "",
     responses(
         (status = 200, description = "Get timeshifter properties", body = DeviceStatus),
         (status = 400, description = "Invalid entity name"),
@@ -83,7 +83,7 @@ async fn get_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{house_id}/timeshifters/{entity_name}",
+    path = "/timeshifters/{entity_name}",
     responses(
         (status = 200, description = "Successfully added timeshifter entity", body = String),
         (status = 500, description = "Internal server error"),
@@ -108,7 +108,7 @@ async fn add_by_id(id: web::Path<(u32, String)>, params: web::Json<TimeShifterEn
 
 #[utoipa::path(
     delete,
-    path = "/houses/{house_id}/timeshifters/{entity_name}",
+    path = "/timeshifters/{entity_name}",
     responses(
         (status = 200, description = "Successfully removed timeshifter entity", body = String),
         (status = 500, description = "Internal server error"),
@@ -130,7 +130,7 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{house_id}/timeshifters/{entity_name}/job",
+    path = "/job",
     responses(
         (status = 200, description = "Successfully scheduled job for timeshifter entity", body = Job),
         (status = 500, description = "Internal server error"),
@@ -158,7 +158,7 @@ async fn schedule_job(id: web::Path<(u32, String)>, body: web::Json<ScheduleJob>
 
 #[utoipa::path(
     delete,
-    path = "/houses/{house_id}/timeshifters/{entity_name}/job/{job_id}",
+    path = "/job/{job_id}",
     responses(
         (status = 200, description = "Successfully scheduled job for timeshifter entity", body = String),
         (status = 500, description = "Internal server error"),
@@ -186,7 +186,7 @@ async fn cancel_job(id: web::Path<(u32, String, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{house_id}/timeshifters/{entity_name}/shutdown",
+    path = "/shutdown",
     responses(
         (status = 200, description = "Successfully shut down timeshifter entity", body = String),
         (status = 500, description = "Internal server error"),

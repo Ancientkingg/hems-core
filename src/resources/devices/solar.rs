@@ -22,7 +22,7 @@ struct SolarInfo {
 
 #[utoipa::path(
     get,
-    path = "/solar/{house_id}/{solar_id}",
+    path = "",
     responses(
         (status = 200, description = "Get solar information", body = SolarInfo),
         (status = 500, description = "Failed to get solar information"),
@@ -46,7 +46,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/solar/{house_id}/{entity_name}",
+    path = "",
     request_body = SolarEntityParams,
     responses(
         (status = 200, description = "Add solar entity successfully"),
@@ -74,7 +74,7 @@ async fn add_by_id(
 
 #[utoipa::path(
     delete,
-    path = "/solar/{house_id}/{entity_name}",
+    path = "",
     responses(
         (status = 200, description = "Remove solar entity successfully"),
         (status = 500, description = "Failed to remove solar entity"),
@@ -95,7 +95,7 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/solar/{house_id}/{solar_id}/toggle/{state}",
+    path = "/toggle/{state}",
     responses(
         (status = 200, description = "Toggle solar state successfully"),
         (status = 500, description = "Failed to toggle solar state"),

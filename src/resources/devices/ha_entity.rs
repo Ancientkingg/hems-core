@@ -31,7 +31,7 @@ async fn get_entity_consumption(path: web::Path<(String, String)>) -> impl Respo
 
 #[utoipa::path(
     post,
-    path = "/entity",
+    path = "",
     request_body = EntityRequest,
     responses(
         (status = 200, description = "Entity added successfully"),

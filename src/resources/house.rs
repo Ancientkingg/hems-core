@@ -19,6 +19,10 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
             .service(load)
             .service(set_config)
             .service(list_entities)
+            .service(pause_simulation)
+            .service(resume_simulation)
+            .service(stop_simulation)
+            .service(set_time)
             .configure(battery::configure)
             .configure(meter::configure)
             .configure(solar::configure)
@@ -30,7 +34,7 @@ pub fn configure(cfg: &mut utoipa_actix_web::service_config::ServiceConfig) {
 
 #[utoipa::path(
     get,
-    path = "/houses/{id}",
+    path = "",
     responses(
         (status = 200, description = "House details", body = String),
         (status = 404, description = "House not found"),
@@ -44,7 +48,7 @@ async fn get_by_id(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{id}",
+    path = "",
     responses(
         (status = 200, description = "House composed successfully"),
         (status = 500, description = "Error composing house"),
@@ -55,17 +59,17 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
     let house_id = path.into_inner();
     match demkit::env::add_host(house_id).await {
         Ok(_) => println!("Host added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     match demkit::env::add_weather(house_id).await {
         Ok(_) => println!("Weather added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     match demkit::env::add_sun(house_id).await {
         Ok(_) => println!("Sun added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let sm_params = demkit::env::MeterEntityParams {
@@ -76,7 +80,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_meter(house_id, sm_params).await {
         Ok(_) => println!("Meter added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let gm_params = demkit::env::MeterEntityParams {
@@ -87,7 +91,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_meter(house_id, gm_params).await {
         Ok(_) => println!("Meter added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let curt_params = demkit::env::CurtEntityParams {
@@ -100,7 +104,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_curt(house_id, curt_params).await {
         Ok(_) => println!("Curt added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let zone_params = demkit::env::ZoneEntityParams {
@@ -114,7 +118,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_zone(house_id, zone_params).await {
         Ok(_) => println!("Zone added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let thermostat_params = demkit::env::ThermostatEntityParams {
@@ -129,7 +133,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_thermostat(house_id, thermostat_params).await {
         Ok(_) => println!("Thermostat added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let dhw_params = demkit::env::DhwEntityParams {
@@ -138,7 +142,7 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_dhw(house_id, dhw_params).await {
         Ok(_) => println!("DHW added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let heat_source_params = demkit::env::HeatSourceEntityParams {
@@ -149,21 +153,91 @@ async fn compose(path: web::Path<u32>) -> impl Responder {
 
     match demkit::env::add_heat_source(house_id, heat_source_params).await {
         Ok(_) => println!("Heat Source added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     let heat_pump_params = demkit::env::HeatPumpEntityParams {
         name: "DomesticHotWaterControllerBoiler".to_string(),
         producing_temperatures: vec![0.0, 60.0],
-        producing_powers: vec![0.0, 25000.0]
+        producing_powers: vec![0.0, 25000.0],
     };
 
     match demkit::env::add_heat_pump(house_id, heat_pump_params).await {
         Ok(_) => println!("Heat Pump added successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     HttpResponse::Ok().body("House composed successfully")
+}
+
+#[utoipa::path(
+    post,
+    path = "/pause",
+    responses(
+        (status = 200, description = "House paused successfully"),
+        (status = 500, description = "Error pausing house"),
+    ),
+)]
+#[post("/pause")]
+async fn pause_simulation(path: web::Path<u32>) -> impl Responder {
+    let _house_id = path.into_inner();
+    match demkit::sim::pause_simulation().await {
+        Ok(_) => return HttpResponse::Ok().body(format!("House {} paused successfully", _house_id)),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/resume",
+    responses(
+        (status = 200, description = "House resumed successfully"),
+        (status = 500, description = "Error resuming house"),
+    ),
+)]
+#[post("/resume")]
+async fn resume_simulation(path: web::Path<u32>) -> impl Responder {
+    let _house_id = path.into_inner();
+    match demkit::sim::resume_simulation().await {
+        Ok(_) => return HttpResponse::Ok().body(format!("House {} resumed successfully", _house_id)),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/stop",
+    responses(
+        (status = 200, description = "House stopped successfully"),
+        (status = 500, description = "Error stopping house"),
+    ),
+)]
+#[post("/stop")]
+async fn stop_simulation(path: web::Path<u32>) -> impl Responder {
+    let _house_id = path.into_inner();
+    match demkit::sim::stop_simulation().await {
+        Ok(_) => return HttpResponse::Ok().body(format!("House {} stopped successfully", _house_id)),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/time",
+    responses(
+        (status = 200, description = "House time set successfully"),
+        (status = 500, description = "Error setting house time"),
+    ),
+)]
+#[post("/time")]
+async fn set_time(path: web::Path<u32>, time: web::Json<demkit::sim::Time>) -> impl Responder {
+    let _house_id = path.into_inner();
+    match demkit::sim::set_time(time.into_inner()).await {
+        Ok(_) => println!("House time set successfully"),
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+
+    HttpResponse::Ok().body("House time set successfully")
 }
 
 
@@ -180,7 +254,7 @@ async fn reset(path: web::Path<u32>) -> impl Responder {
     let _house_id = path.into_inner();
     match demkit::env::reset().await {
         Ok(_) => println!("House reset successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
 
     HttpResponse::Ok().body("House simulation reset successfully")
@@ -188,7 +262,7 @@ async fn reset(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{id}/load",
+    path = "/load",
     responses(
         (status = 200, description = "House loaded successfully"),
         (status = 500, description = "Error loading house"),
@@ -199,12 +273,12 @@ async fn load(path: web::Path<u32>) -> impl Responder {
     let _house_id = path.into_inner();
     match demkit::env::load().await {
         Ok(_) => println!("House loaded successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
 
     match demkit::env::start().await {
         Ok(_) => println!("House started successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
 
     HttpResponse::Ok().body("House simulation loaded successfully and currently running")
@@ -212,17 +286,20 @@ async fn load(path: web::Path<u32>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{id}/config",
+    path = "/config",
     responses(
         (status = 200, description = "House config set successfully"),
         (status = 500, description = "Error setting house config"),
     ),
 )]
 #[post("/config")]
-async fn set_config(_path: web::Path<u32>, config: web::Json<demkit::env::SimConfig>) -> impl Responder {
+async fn set_config(
+    _path: web::Path<u32>,
+    config: web::Json<demkit::env::SimConfig>,
+) -> impl Responder {
     match demkit::env::set_config(config.into_inner()).await {
         Ok(_) => println!("House config set successfully"),
-        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        Err(e) => return HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     };
 
     HttpResponse::Ok().body("House config set successfully")
@@ -230,7 +307,7 @@ async fn set_config(_path: web::Path<u32>, config: web::Json<demkit::env::SimCon
 
 #[utoipa::path(
     get,
-    path = "/houses/{id}/time",
+    path = "/time",
     responses(
         (status = 200, description = "Current time", body = String),
         (status = 500, description = "Error getting time"),
@@ -244,7 +321,7 @@ async fn get_time() -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/houses/{id}/entities",
+    path = "/entities",
     responses(
         (status = 200, description = "List of entities", body = String),
         (status = 500, description = "Error getting entities"),

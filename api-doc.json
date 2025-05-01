@@ -24,7 +24,38 @@
         }
       }
     },
-    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}": {
+    "/houses/{id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "responses": {
+          "200": {
+            "description": "House details",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "House not found"
+          }
+        }
+      },
+      "post": {
+        "operationId": "compose",
+        "responses": {
+          "200": {
+            "description": "House composed successfully"
+          },
+          "500": {
+            "description": "Error composing house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}": {
       "get": {
         "operationId": "get_by_id",
         "parameters": [
@@ -69,108 +100,7 @@
             "description": "Internal server error"
           }
         }
-      }
-    },
-    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}/target": {
-      "get": {
-        "operationId": "set_target_soc_none",
-        "parameters": [
-          {
-            "name": "house_id",
-            "in": "path",
-            "description": "House ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "battery_id",
-            "in": "path",
-            "description": "Battery ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Unset target SOC",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatteryInfo"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error unsetting target SOC"
-          }
-        }
-      }
-    },
-    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{battery_id}/target/{soc}": {
-      "get": {
-        "operationId": "set_target_soc",
-        "parameters": [
-          {
-            "name": "house_id",
-            "in": "path",
-            "description": "House ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "battery_id",
-            "in": "path",
-            "description": "Battery ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "soc",
-            "in": "path",
-            "description": "Target state of charge",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Set target SOC",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatteryInfo"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error setting target SOC"
-          }
-        }
-      }
-    },
-    "/houses/{id}/battery/{id}/houses/{house_id}/battery/{entity_name}": {
+      },
       "post": {
         "operationId": "add_by_id",
         "parameters": [
@@ -248,7 +178,149 @@
         }
       }
     },
-    "/houses/{id}/entity/entity": {
+    "/houses/{id}/battery/{id}/target": {
+      "get": {
+        "operationId": "set_target_soc_none",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "battery_id",
+            "in": "path",
+            "description": "Battery ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unset target SOC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatteryInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error unsetting target SOC"
+          }
+        }
+      }
+    },
+    "/houses/{id}/battery/{id}/target/{soc}": {
+      "get": {
+        "operationId": "set_target_soc",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "battery_id",
+            "in": "path",
+            "description": "Battery ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "soc",
+            "in": "path",
+            "description": "Target state of charge",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Set target SOC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatteryInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error setting target SOC"
+          }
+        }
+      }
+    },
+    "/houses/{id}/config": {
+      "post": {
+        "operationId": "set_config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "House config set successfully"
+          },
+          "500": {
+            "description": "Error setting house config"
+          }
+        }
+      }
+    },
+    "/houses/{id}/entities": {
+      "get": {
+        "operationId": "list_entities",
+        "responses": {
+          "200": {
+            "description": "List of entities",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting entities"
+          }
+        }
+      }
+    },
+    "/houses/{id}/entity": {
       "post": {
         "operationId": "add_entity",
         "requestBody": {
@@ -302,35 +374,6 @@
       }
     },
     "/houses/{id}/houses/{id}": {
-      "get": {
-        "operationId": "get_by_id",
-        "responses": {
-          "200": {
-            "description": "House details",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "House not found"
-          }
-        }
-      },
-      "post": {
-        "operationId": "compose",
-        "responses": {
-          "200": {
-            "description": "House composed successfully"
-          },
-          "500": {
-            "description": "Error composing house"
-          }
-        }
-      },
       "delete": {
         "operationId": "reset",
         "responses": {
@@ -343,50 +386,7 @@
         }
       }
     },
-    "/houses/{id}/houses/{id}/config": {
-      "post": {
-        "operationId": "set_config",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SimConfig"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "House config set successfully"
-          },
-          "500": {
-            "description": "Error setting house config"
-          }
-        }
-      }
-    },
-    "/houses/{id}/houses/{id}/entities": {
-      "get": {
-        "operationId": "list_entities",
-        "responses": {
-          "200": {
-            "description": "List of entities",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error getting entities"
-          }
-        }
-      }
-    },
-    "/houses/{id}/houses/{id}/load": {
+    "/houses/{id}/load": {
       "post": {
         "operationId": "load",
         "responses": {
@@ -399,27 +399,7 @@
         }
       }
     },
-    "/houses/{id}/houses/{id}/time": {
-      "get": {
-        "operationId": "get_time",
-        "responses": {
-          "200": {
-            "description": "Current time",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error getting time"
-          }
-        }
-      }
-    },
-    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}": {
+    "/houses/{id}/meters/{id}": {
       "get": {
         "operationId": "get_by_id",
         "responses": {
@@ -439,7 +419,7 @@
         }
       }
     },
-    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}/export": {
+    "/houses/{id}/meters/{id}/export": {
       "get": {
         "operationId": "get_export",
         "responses": {
@@ -460,7 +440,7 @@
         }
       }
     },
-    "/houses/{id}/meters/{id}/meters/{house_id}/{meter_id}/import": {
+    "/houses/{id}/meters/{id}/import": {
       "get": {
         "operationId": "get_import",
         "responses": {
@@ -481,7 +461,51 @@
         }
       }
     },
-    "/houses/{id}/solar/{id}/solar/{house_id}/{entity_name}": {
+    "/houses/{id}/pause": {
+      "post": {
+        "operationId": "pause_simulation",
+        "responses": {
+          "200": {
+            "description": "House paused successfully"
+          },
+          "500": {
+            "description": "Error pausing house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/resume": {
+      "post": {
+        "operationId": "resume_simulation",
+        "responses": {
+          "200": {
+            "description": "House resumed successfully"
+          },
+          "500": {
+            "description": "Error resuming house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/solar/{id}": {
+      "get": {
+        "operationId": "get_by_id",
+        "responses": {
+          "200": {
+            "description": "Get solar information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SolarInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get solar information"
+          }
+        }
+      },
       "post": {
         "operationId": "add_by_id",
         "parameters": [
@@ -559,27 +583,7 @@
         }
       }
     },
-    "/houses/{id}/solar/{id}/solar/{house_id}/{solar_id}": {
-      "get": {
-        "operationId": "get_by_id",
-        "responses": {
-          "200": {
-            "description": "Get solar information",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SolarInfo"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to get solar information"
-          }
-        }
-      }
-    },
-    "/houses/{id}/solar/{id}/solar/{house_id}/{solar_id}/toggle/{state}": {
+    "/houses/{id}/solar/{id}/toggle/{state}": {
       "get": {
         "operationId": "toggle",
         "parameters": [
@@ -625,7 +629,20 @@
         }
       }
     },
-    "/houses/{id}/thermal/{id}/thermal/{house_id}/{thermal_id}": {
+    "/houses/{id}/stop": {
+      "post": {
+        "operationId": "stop_simulation",
+        "responses": {
+          "200": {
+            "description": "House stopped successfully"
+          },
+          "500": {
+            "description": "Error stopping house"
+          }
+        }
+      }
+    },
+    "/houses/{id}/thermal/{id}": {
       "get": {
         "operationId": "get_by_id",
         "parameters": [
@@ -669,7 +686,7 @@
         }
       }
     },
-    "/houses/{id}/thermal/{id}/thermal/{house_id}/{thermal_id}/target/{temp}": {
+    "/houses/{id}/thermal/{id}/target/{temp}": {
       "post": {
         "operationId": "set_target_temp",
         "parameters": [
@@ -716,7 +733,48 @@
         }
       }
     },
-    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}": {
+    "/houses/{id}/time": {
+      "get": {
+        "operationId": "get_time",
+        "responses": {
+          "200": {
+            "description": "Current time",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting time"
+          }
+        }
+      },
+      "post": {
+        "operationId": "set_time",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Time"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "House time set successfully"
+          },
+          "500": {
+            "description": "Error setting house time"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{entity_name}": {
       "get": {
         "operationId": "get_by_id",
         "parameters": [
@@ -759,7 +817,166 @@
             "description": "Internal server error"
           }
         }
-      },
+      }
+    },
+    "/houses/{id}/timeshifters/{entity_name}/job": {
+      "post": {
+        "operationId": "schedule_job",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleJob"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully scheduled job for timeshifter entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{entity_name}/job/{job_id}": {
+      "delete": {
+        "operationId": "cancel_job",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "path",
+            "description": "Job ID to cancel",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully scheduled job for timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{entity_name}/shutdown": {
+      "post": {
+        "operationId": "force_shutdown",
+        "parameters": [
+          {
+            "name": "house_id",
+            "in": "path",
+            "description": "House ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "entity_name",
+            "in": "path",
+            "description": "Name of the timeshifter entity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully shut down timeshifter entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/houses/{id}/timeshifters/{entity_name}/timeshifters/{entity_name}": {
       "post": {
         "operationId": "add_by_id",
         "parameters": [
@@ -837,163 +1054,6 @@
         "responses": {
           "200": {
             "description": "Successfully removed timeshifter entity",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/job": {
-      "post": {
-        "operationId": "schedule_job",
-        "parameters": [
-          {
-            "name": "house_id",
-            "in": "path",
-            "description": "House ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "entity_name",
-            "in": "path",
-            "description": "Name of the timeshifter entity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ScheduleJob"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully scheduled job for timeshifter entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Job"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/job/{job_id}": {
-      "delete": {
-        "operationId": "cancel_job",
-        "parameters": [
-          {
-            "name": "house_id",
-            "in": "path",
-            "description": "House ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "entity_name",
-            "in": "path",
-            "description": "Name of the timeshifter entity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "job_id",
-            "in": "path",
-            "description": "Job ID to cancel",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully scheduled job for timeshifter entity",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/houses/{id}/timeshifters/{id}/houses/{house_id}/timeshifters/{entity_name}/shutdown": {
-      "post": {
-        "operationId": "force_shutdown",
-        "parameters": [
-          {
-            "name": "house_id",
-            "in": "path",
-            "description": "House ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "entity_name",
-            "in": "path",
-            "description": "Name of the timeshifter entity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully shut down timeshifter entity",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1440,6 +1500,19 @@
           "target_temperature": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "Time": {
+        "type": "object",
+        "required": [
+          "time"
+        ],
+        "properties": {
+          "time": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
           }
         }
       },

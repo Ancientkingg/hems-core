@@ -24,7 +24,7 @@ struct ThermalInfo {
 
 #[utoipa::path(
     get,
-    path = "/thermal/{house_id}/{thermal_id}",
+    path = "",
     responses(
         (status = 200, description = "Get thermal information", body = ThermalInfo),
         (status = 500, description = "Failed to get thermal information"),
@@ -62,7 +62,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/thermal/{house_id}/{thermal_id}/target/{temp}",
+    path = "/target/{temp}",
     responses(
         (status = 200, description = "Set target temperature successfully"),
         (status = 500, description = "Failed to set target temperature"),

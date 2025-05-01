@@ -63,7 +63,7 @@ impl From<BatteryProperties> for BatteryInfo {
 
 #[utoipa::path(
     get,
-    path = "/houses/{house_id}/battery/{battery_id}",
+    path = "",
     responses(
         (status = 200, description = "Get battery properties", body = BatteryInfo),
         (status = 400, description = "Invalid battery ID"),
@@ -90,7 +90,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     post,
-    path = "/houses/{house_id}/battery/{entity_name}",
+    path = "",
     responses(
         (status = 200, description = "Battery added successfully"),
         (status = 500, description = "Error adding battery"),
@@ -117,7 +117,7 @@ async fn add_by_id(
 
 #[utoipa::path(
     delete,
-    path = "/houses/{house_id}/battery/{entity_name}",
+    path = "",
     responses(
         (status = 200, description = "Battery removed successfully"),
         (status = 500, description = "Error removing battery"),
@@ -139,7 +139,7 @@ async fn remove_by_id(id: web::Path<(u32, String)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/houses/{house_id}/battery/{battery_id}/target/{soc}",
+    path = "/target/{soc}",
     responses(
         (status = 200, description = "Set target SOC", body = BatteryInfo),
         (status = 500, description = "Error setting target SOC"),
@@ -166,7 +166,7 @@ async fn set_target_soc(id: web::Path<(u32, u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/houses/{house_id}/battery/{battery_id}/target",
+    path = "/target",
     responses(
         (status = 200, description = "Unset target SOC", body = BatteryInfo),
         (status = 500, description = "Error unsetting target SOC"),

@@ -26,7 +26,7 @@ struct MeterInfo {
 
 #[utoipa::path(
     get,
-    path = "/meters/{house_id}/{meter_id}",
+    path = "",
     responses(
         (status = 200, description = "Get meter information", body = MeterInfo),
         (status = 500, description = "Failed to get meter information"),
@@ -71,7 +71,7 @@ async fn get_by_id(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/meters/{house_id}/{meter_id}/import",
+    path = "/import",
     responses(
         (status = 200, description = "Get energy import", body = f64),
         (status = 500, description = "Failed to get energy import"),
@@ -91,7 +91,7 @@ async fn get_import(id: web::Path<(u32, u32)>) -> impl Responder {
 
 #[utoipa::path(
     get,
-    path = "/meters/{house_id}/{meter_id}/export",
+    path = "/export",
     responses(
         (status = 200, description = "Get energy export", body = f64),
         (status = 500, description = "Failed to get energy export"),
