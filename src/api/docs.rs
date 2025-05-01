@@ -4,9 +4,9 @@ use utoipa::OpenApi;
 #[derive(OpenApi)]
 #[openapi(
     info(
-        title = "Demkit API",
+        title = "HEMS-Core API",
         version = "1.0",
-        description = "API documentation for the Demkit project",
+        description = "API documentation for the HEMS project as part of Convergence initiative.",
         license(
             name = "MIT",
             url = "https://opensource.org/licenses/MIT"
