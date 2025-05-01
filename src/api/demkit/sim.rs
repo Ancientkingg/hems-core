@@ -11,7 +11,7 @@ pub struct Time {
 pub async fn pause_simulation() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/pause", BASE_URL);
+    let url = format!("{}/pause", *BASE_URL);
     let response = client.post(&url).send().await?;
 
     if response.status().is_success() {
@@ -28,7 +28,7 @@ pub async fn pause_simulation() -> Result<(), ApiError> {
 pub async fn resume_simulation() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/resume", BASE_URL);
+    let url = format!("{}/resume", *BASE_URL);
     let response = client.post(&url).send().await?;
 
     if response.status().is_success() {
@@ -45,7 +45,7 @@ pub async fn resume_simulation() -> Result<(), ApiError> {
 pub async fn stop_simulation() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/stop", BASE_URL);
+    let url = format!("{}/stop", *BASE_URL);
     let response = client.post(&url).send().await?;
 
     if response.status().is_success() {
@@ -62,7 +62,7 @@ pub async fn stop_simulation() -> Result<(), ApiError> {
 pub async fn set_time(time: Time) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/time", BASE_URL);
+    let url = format!("{}/time", *BASE_URL);
     let response = client.post(&url).json(&time).send().await?;
 
     if response.status().is_success() {

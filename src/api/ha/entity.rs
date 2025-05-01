@@ -7,7 +7,7 @@ pub async fn get_entity_consumption(entity_id: &str) -> Result<EntityState, ApiE
 
     let load_map = LOAD_MAP.get_or_init(init_load_map).read().unwrap();
 
-    let url = format!("{}/api/states/{}", BASE_URL, entity_id);
+    let url = format!("{}/api/states/{}", *BASE_URL, entity_id);
 
     let ha_token = env::var("HA_TOKEN").expect("HA_TOKEN must be set");
 

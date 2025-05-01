@@ -205,7 +205,7 @@ impl Entity {
 pub async fn add_host(house_id: u32) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let inner = HostEntityParams {
         name: format!("House-{house_id}"),
@@ -228,7 +228,7 @@ pub async fn add_host(house_id: u32) -> Result<(), ApiError> {
 pub async fn add_weather(house_id: u32) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let inner = WeatherEntityParams {
         name: format!("Weather-House-{house_id}"),
@@ -251,7 +251,7 @@ pub async fn add_weather(house_id: u32) -> Result<(), ApiError> {
 pub async fn add_sun(house_id: u32) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let inner = SunEntityParams {
         name: format!("Sun-House-{house_id}"),
@@ -274,7 +274,7 @@ pub async fn add_sun(house_id: u32) -> Result<(), ApiError> {
 pub async fn add_timeshifter(house_id: u32, mut inner: TimeShifterEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -297,7 +297,7 @@ pub async fn add_timeshifter(house_id: u32, mut inner: TimeShifterEntityParams) 
 pub async fn add_battery(house_id: u32) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let inner = BatteryEntityParams {
         name: format!("Battery-House-{house_id}"),
@@ -320,7 +320,7 @@ pub async fn add_battery(house_id: u32) -> Result<(), ApiError> {
 pub async fn add_solar(house_id: u32) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let inner = SolarEntityParams {
         name: format!("PV-House-{house_id}"),
@@ -343,7 +343,7 @@ pub async fn add_solar(house_id: u32) -> Result<(), ApiError> {
 pub async fn add_curt(house_id: u32, mut inner: CurtEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -366,7 +366,7 @@ pub async fn add_curt(house_id: u32, mut inner: CurtEntityParams) -> Result<(), 
 pub async fn add_zone(house_id: u32, mut inner: ZoneEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -389,7 +389,7 @@ pub async fn add_zone(house_id: u32, mut inner: ZoneEntityParams) -> Result<(), 
 pub async fn add_meter(house_id: u32, mut inner: MeterEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -412,7 +412,7 @@ pub async fn add_meter(house_id: u32, mut inner: MeterEntityParams) -> Result<()
 pub async fn add_thermostat(house_id: u32, mut inner: ThermostatEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -435,7 +435,7 @@ pub async fn add_thermostat(house_id: u32, mut inner: ThermostatEntityParams) ->
 pub async fn add_dhw(house_id: u32, mut inner: DhwEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -458,7 +458,7 @@ pub async fn add_dhw(house_id: u32, mut inner: DhwEntityParams) -> Result<(), Ap
 pub async fn add_heat_source(house_id: u32, mut inner: HeatSourceEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -481,7 +481,7 @@ pub async fn add_heat_source(house_id: u32, mut inner: HeatSourceEntityParams) -
 pub async fn add_heat_pump(house_id: u32, mut inner: HeatPumpEntityParams) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities", BASE_URL);
+    let url = format!("{}/composer/entities", *BASE_URL);
 
     let name = inner.name.clone();
     inner.name = format!("{name}-House-{house_id}");
@@ -504,7 +504,7 @@ pub async fn add_heat_pump(house_id: u32, mut inner: HeatPumpEntityParams) -> Re
 pub async fn set_config(config: SimConfig) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/config", BASE_URL);
+    let url = format!("{}/composer/config", *BASE_URL);
 
     let response = client.post(url).json(&config).send().await?;
 
@@ -522,7 +522,7 @@ pub async fn set_config(config: SimConfig) -> Result<(), ApiError> {
 pub async fn load() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/load", BASE_URL);
+    let url = format!("{}/composer/load", *BASE_URL);
 
     let response = client.post(url).send().await?;
 
@@ -540,7 +540,7 @@ pub async fn load() -> Result<(), ApiError> {
 pub async fn start() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/start", BASE_URL);
+    let url = format!("{}/composer/start", *BASE_URL);
 
     let response = client.post(url).send().await?;
 
@@ -558,7 +558,7 @@ pub async fn start() -> Result<(), ApiError> {
 pub async fn reset() -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/reset", BASE_URL);
+    let url = format!("{}/composer/reset", *BASE_URL);
 
     let response = client.post(url).send().await?;
 
@@ -576,7 +576,7 @@ pub async fn reset() -> Result<(), ApiError> {
 pub async fn remove_entity(house_id: u32, name: &str) -> Result<(), ApiError> {
     let client = CLIENT.get_or_init(init);
 
-    let url = format!("{}/composer/entities/{name}-House-{house_id}", BASE_URL);
+    let url = format!("{}/composer/entities/{name}-House-{house_id}", *BASE_URL);
 
     let response = client.delete(url).send().await?;
 
