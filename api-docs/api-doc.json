@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Demkit API",
-    "description": "API documentation for the Demkit project",
+    "title": "HEMS-Core API",
+    "description": "API documentation for the HEMS project as part of Convergence initiative.",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -1074,6 +1074,9 @@
         }
       },
       "post": {
+        "tags": [
+          "Timeshifters"
+        ],
         "description": "Add a new timeshifter entity.",
         "operationId": "add_by_id",
         "parameters": [
